@@ -64,7 +64,6 @@ public class MeshGen {
                     System.out.println(mesh.faces.get(k).positions[2]);
                     System.out.println("");
                 }
-                }
             }
         }
 	}
