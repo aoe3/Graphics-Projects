@@ -25,26 +25,45 @@ public class MeshGen {
 //                    System.out.println(mesh.positions.get(i));
 //                }
 
-                for (int j=0; j<=n; j++) {
-                    for (int k = 3; k < 2 * n + 2; k += 2) {
-                        OBJFace face1 = new OBJFace(3, true, true);
-                        OBJFace face2 = new OBJFace(3, true, true);
+                for (int k = 1; k < 2 * n; k += 2) {
+                	if(k!=(2*n-1)){
+	                    OBJFace face1 = new OBJFace(3, true, true);
+	                    OBJFace face2 = new OBJFace(3, true, true);
 
-                        face1.positions[0] = k;
-                        face1.positions[1] = k + 1;
-                        face1.positions[2] = k + 2;
+	                    face1.positions[0] = k;
+	                    face1.positions[1] = k + 1;
+	                    face1.positions[2] = k + 2;
 
-                        face2.positions[0] = k + 2;
-                        face2.positions[1] = k + 1;
-                        face2.positions[2] = k + 3;
+	                    face2.positions[0] = k + 2;
+	                    face2.positions[1] = k + 1;
+	                    face2.positions[2] = k + 3;
 
-                        mesh.faces.add(face1);
-                        mesh.faces.add(face2);
-                    }
-                    System.out.println(mesh.faces.get(j).positions[0]);
-                    System.out.println(mesh.faces.get(j).positions[1]);
-                    System.out.println(mesh.faces.get(j).positions[2]);
+	                    mesh.faces.add(face1);
+	                    mesh.faces.add(face2);
+	                } else {
+	                	OBJFace face1 = new OBJFace(3, true, true);
+	                    OBJFace face2 = new OBJFace(3, true, true);
+
+	                    face1.positions[0] = k;
+	                    face1.positions[1] = k + 1;
+	                    face1.positions[2] = 1;
+
+	                    face2.positions[0] = 1;
+	                    face2.positions[1] = k + 1;
+	                    face2.positions[2] = 2;
+
+	                    mesh.faces.add(face1);
+	                    mesh.faces.add(face2);
+	                }
+                    System.out.println(mesh.faces.get(k-1).positions[0]);
+                    System.out.println(mesh.faces.get(k-1).positions[1]);
+                    System.out.println(mesh.faces.get(k-1).positions[2]);
                     System.out.println("");
+                    System.out.println(mesh.faces.get(k).positions[0]);
+                    System.out.println(mesh.faces.get(k).positions[1]);
+                    System.out.println(mesh.faces.get(k).positions[2]);
+                    System.out.println("");
+                }
                 }
             }
         }
