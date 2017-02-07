@@ -1,2 +1,2 @@
 # cs4620
-for gprahics
+for graphics
