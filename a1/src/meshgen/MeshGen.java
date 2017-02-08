@@ -26,7 +26,10 @@ public class MeshGen {
                 }
 
                 for (int i=0; i<mesh.positions.size(); i++) {
-                    System.out.println(mesh.positions.get(i));
+                    System.out.print("v ");
+                    System.out.print(mesh.positions.get(i).x + " ");
+                    System.out.print(mesh.positions.get(i).y + " ");
+                    System.out.println(mesh.positions.get(i).z);
                 }
                 
                 for (int k = 3; k < 2 * n+2; k += 2) {
@@ -59,19 +62,19 @@ public class MeshGen {
 	                    mesh.faces.add(face1);
 	                    mesh.faces.add(face2);
 	                }
-                    System.out.println(mesh.faces.get(k-3).positions[0]);
-                    System.out.println(mesh.faces.get(k-3).positions[1]);
+	                System.out.print("f ");
+                    System.out.print(mesh.faces.get(k-3).positions[0] + " ");
+                    System.out.print(mesh.faces.get(k-3).positions[1] + " ");
                     System.out.println(mesh.faces.get(k-3).positions[2]);
-                    System.out.println("");
-                    System.out.println(mesh.faces.get(k-2).positions[0]);
-                    System.out.println(mesh.faces.get(k-2).positions[1]);
+                    System.out.print("f ");
+                    System.out.print(mesh.faces.get(k-2).positions[0] + " ");
+                    System.out.print(mesh.faces.get(k-2).positions[1] + " ");
                     System.out.println(mesh.faces.get(k-2).positions[2]);
-                    System.out.println("");
                 }
-                for(int l=0; l<(2*n); l++){
-                  	System.out.println(mesh.faces);
-                }
-                System.out.println("");
+//                for(int l=0; l<(2*n); l++){
+//                  	System.out.println(mesh.faces);
+//                }
+//                System.out.println("");
 
        			for(int h = 0; h < (2*n); h+=2){
        				if(h<(2*n-2)){
@@ -105,10 +108,11 @@ public class MeshGen {
                 	}
                 }
                 for (int j = (2*n); j < (4*n); j++){
-                	System.out.println(mesh.faces.get(j).positions[0]);
-                    System.out.println(mesh.faces.get(j).positions[1]);
+       			    System.out.print("f ");
+                	System.out.print(mesh.faces.get(j).positions[0] + " ");
+                    System.out.print(mesh.faces.get(j).positions[1] + " ");
                     System.out.println(mesh.faces.get(j).positions[2]);
-                    System.out.println("");
+//                    System.out.println("");
                 }
             }
         }
