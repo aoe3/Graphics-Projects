@@ -38,12 +38,12 @@ public class MeshGen {
 	                    OBJFace face2 = new OBJFace(3, true, true);
 
 	                    face1.positions[0] = k;
-	                    face1.positions[1] = k + 1;
-	                    face1.positions[2] = k + 2;
+	                    face1.positions[1] = k + 2;
+	                    face1.positions[2] = k + 1;
 
 	                    face2.positions[0] = k + 2;
-	                    face2.positions[1] = k + 1;
-	                    face2.positions[2] = k + 3;
+	                    face2.positions[1] = k + 3;
+	                    face2.positions[2] = k + 1;
 
 	                    mesh.faces.add(face1);
 	                    mesh.faces.add(face2);
@@ -52,12 +52,12 @@ public class MeshGen {
 	                    OBJFace face2 = new OBJFace(3, true, true);
 
 	                    face1.positions[0] = k;
-	                    face1.positions[1] = k + 1;
-	                    face1.positions[2] = 3;
+	                    face1.positions[1] = 3;
+	                    face1.positions[2] = k+1;
 
 	                    face2.positions[0] = 3;
-	                    face2.positions[1] = k + 1;
-	                    face2.positions[2] = 4;
+	                    face2.positions[1] = 4;
+	                    face2.positions[2] = k+1;
 
 	                    mesh.faces.add(face1);
 	                    mesh.faces.add(face2);
@@ -82,8 +82,8 @@ public class MeshGen {
 	                	OBJFace bottomhalf = new OBJFace(3, true, true);
 
 	                	tophalf.positions[0] = 1;
-	                	tophalf.positions[1] = h+3;
-	                	tophalf.positions[2] = h+5;
+	                	tophalf.positions[1] = h+5;
+	                	tophalf.positions[2] = h+3;
 
 	                	bottomhalf.positions[0] = 2;
 	                	bottomhalf.positions[1] = h+4;
@@ -96,8 +96,8 @@ public class MeshGen {
 	                	OBJFace bottomhalf = new OBJFace(3, true, true);
 
 	                	tophalf.positions[0] = 1;
-	                	tophalf.positions[1] = h+3;
-	                	tophalf.positions[2] = 3;
+	                	tophalf.positions[1] = 3;
+	                	tophalf.positions[2] = h+3;
 
 	                	bottomhalf.positions[0] = 2;
 	                	bottomhalf.positions[1] = h+4;
