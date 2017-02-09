@@ -266,6 +266,7 @@ public class MeshGen {
 	                		lastFace2.positions[1]= bottomCoord - n;
 	                		lastFace2.positions[2]= bottomCoord - 1;
 
+	                		mesh.faces.add(bottomFanFace);
 	                		mesh.faces.add(lastFace2);
 	                } else {
 	                	OBJFace bottomFanFace = new OBJFace(3, true, true);
@@ -331,7 +332,7 @@ public class MeshGen {
                 	int down = p*n+1;
                 	int up = (p+1)*n+1;
                 	for (int q=0; q<(n); q++){
-                		if(q != (n+1)){
+                		if(q != (n-1)){
                 			
 	                		OBJFace face1 = new OBJFace(3, true, true);
 	                		OBJFace face2 = new OBJFace(3, true, true);
@@ -348,24 +349,20 @@ public class MeshGen {
 	                		mesh.faces.add(face2);
 		                	
                 		} else {
-                			if (p == (0)){
 	                			OBJFace face1 = new OBJFace(3, true, true);
 		                		OBJFace face2 = new OBJFace(3, true, true);
 
-		                		face1.positions[0] = down+q;
-		                		face1.positions[1] = down+1;
-		                		face1.positions[2] = down;
+		                		face1.positions[0] = up-n;
+		                		face1.positions[1] = down-1 ;
+		                		face1.positions[2] = down+q;
 
 		                		face2.positions[0] = down+q;
-		                		face2.positions[1] = down;
-		                		face2.positions[2] = up;
+		                		face2.positions[1] = up;
+		                		face2.positions[2] = down;
 
 
 		                		mesh.faces.add(face1);
 		                		mesh.faces.add(face2);
-		                	}
-
-
                 		}
                 		
                 	}
@@ -383,6 +380,55 @@ public class MeshGen {
             		// mesh.faces.add(face3);
               //   	mesh.faces.add(face4);       	
                 }
+
+                int bottomCoord = mesh.positions.size();
+                for (int j = bottomCoord; j > (bottomCoord - n); j--){
+                	if(j == (bottomCoord - n + 1)){
+		                OBJFace bottomStrip1= new OBJFace(3,true,true);
+		                OBJFace bottomStrip2= new OBJFace(3,true,true);
+
+		             //    bottomStrip1.positions[0]= n - (bottomCoord - j);
+		             //    bottomStrip1.positions[1]= j-1;
+		             //    bottomStrip1.positions[2]= n- (bottomCoord - (j-1));
+
+		             //    bottomStrip2.positions[0]= n - (bottomCoord - (j-1)) + 1;
+		             //    bottomStrip2.positions[1]= j;
+		             //    bottomStrip2.positions[2]= j-1;
+
+		             //    mesh.faces.add(bottomStrip1);
+			            // mesh.faces.add(bottomStrip2);
+
+			            OBJFace specialCase1 = new OBJFace(3, true, true);
+			            OBJFace specialCase2 = new OBJFace(3, true, true);
+
+			            specialCase1.positions[0] = n ;
+			            specialCase1.positions[1] = 1;
+			            specialCase1.positions[2] = bottomCoord;
+
+			            specialCase2.positions[0] = 1;
+			            specialCase2.positions[1] = j;
+			            specialCase2.positions[2] = bottomCoord;
+
+			            mesh.faces.add(specialCase1);
+			            mesh.faces.add(specialCase2);
+			        } else {
+
+			        OBJFace bottomStrip1= new OBJFace(3,true,true);
+	                OBJFace bottomStrip2= new OBJFace(3,true,true);
+
+	                bottomStrip1.positions[0]= n - (bottomCoord - j);
+	                bottomStrip1.positions[1]= j-1;
+	                bottomStrip1.positions[2]= n- (bottomCoord - (j-1));
+
+	                bottomStrip2.positions[0]= n - (bottomCoord - (j-1)) + 1;
+	                bottomStrip2.positions[1]= j;
+	                bottomStrip2.positions[2]= j-1;
+
+	                mesh.faces.add(bottomStrip1);
+		            mesh.faces.add(bottomStrip2);
+		        	}
+	            }
+
                 for (int k=0; k<mesh.faces.size(); k++){
                 	System.out.print("f ");
                 	System.out.print(mesh.faces.get(k).positions[0] + " ");
