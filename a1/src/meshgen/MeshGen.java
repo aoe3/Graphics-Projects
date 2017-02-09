@@ -37,26 +37,6 @@ public class MeshGen {
                     System.out.print(mesh.positions.get(i).y + " ");
                     System.out.println(mesh.positions.get(i).z);
                 }
-
-          //       mesh.uvs.add(new Vector2((float)0,(float)0));
-       			// mesh.uvs.add(new Vector2((float)0,(float)0.5));
-
-       			// for (int acc = 5; acc < mesh.positions.size(); acc+=2){
-       			// 	// System.out.println(acc);
-       			// 	float proportion = (float)(acc-3)/(2*n);
-
-       			// 	mesh.uvs.add(new Vector2(proportion, (float)0 ));
-       			// 	mesh.uvs.add(new Vector2(proportion, (float)0.5 ));
-       			// }
-
-       			// mesh.uvs.add(new Vector2((float)1,(float)0));
-       			// mesh.uvs.add(new Vector2((float)1,(float)0.5));
-
-       			// for(int q=0; q<mesh.uvs.size(); q++){
-       			// 	System.out.print("vt ");
-          //           System.out.print(mesh.uvs.get(q).x + " ");
-          //           System.out.println(mesh.uvs.get(q).y);
-       			// }
                 
                 for (int k = 3; k < 2 * n+2; k += 2) {
                 	if(k!=(2*n+1)){
@@ -166,7 +146,6 @@ public class MeshGen {
 						mesh.positions.add(new Vector3(x,y,z));
 						
 					}
-					//System.out.println(" ");
                 }
 
                 //bottom point
@@ -366,19 +345,7 @@ public class MeshGen {
                 		}
                 		
                 	}
-              //    	OBJFace face3 = new OBJFace(3, true, true);
-              //   	OBJFace face4 = new OBJFace(3, true, true);  
-
-              //   	face3.positions[0] = down+n-1;
-            		// face3.positions[1] = up+n;
-            		// face3.positions[2] = up;
-
-            		// face4.positions[0] = down+n-1;
-            		// face4.positions[1] = up;
-            		// face4.positions[2] = down-1;   
-
-            		// mesh.faces.add(face3);
-              //   	mesh.faces.add(face4);       	
+                 	
                 }
 
                 int bottomCoord = mesh.positions.size();
@@ -386,17 +353,6 @@ public class MeshGen {
                 	if(j == (bottomCoord - n + 1)){
 		                OBJFace bottomStrip1= new OBJFace(3,true,true);
 		                OBJFace bottomStrip2= new OBJFace(3,true,true);
-
-		             //    bottomStrip1.positions[0]= n - (bottomCoord - j);
-		             //    bottomStrip1.positions[1]= j-1;
-		             //    bottomStrip1.positions[2]= n- (bottomCoord - (j-1));
-
-		             //    bottomStrip2.positions[0]= n - (bottomCoord - (j-1)) + 1;
-		             //    bottomStrip2.positions[1]= j;
-		             //    bottomStrip2.positions[2]= j-1;
-
-		             //    mesh.faces.add(bottomStrip1);
-			            // mesh.faces.add(bottomStrip2);
 
 			            OBJFace specialCase1 = new OBJFace(3, true, true);
 			            OBJFace specialCase2 = new OBJFace(3, true, true);
