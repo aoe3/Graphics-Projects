@@ -163,20 +163,23 @@ public class MeshGen {
                 mesh.positions.add(new Vector3((float)0,(float)1,(float)0));
 
                 float degreeselevation = 180.0f / m;
-                float dtheta = (float)(degreeselevation * ((float)Math.PI))/180;
+                float dtheta = (float) degreeselevation * ((float)Math.PI/180.0f);
                 float degreesrotation = 360.0f / n;
-                float dphi = (float)(degreesrotation * ((float)Math.PI))/180;
-                for(float theta=((float)(-Math.PI/2)+dtheta); theta<((float)Math.PI/2); theta=theta+dtheta){
-					float y = (float)(Math.sin(theta));
+                float dphi = (float)degreesrotation * ((float)Math.PI/180.0f);
+                for(float theta=(dtheta); theta<((float)Math.PI); theta=theta+dtheta){
+					// float y = (float)(Math.sin(theta));
                 	for (float phi = 0; phi<((Math.PI * 2)); phi=phi+dphi){
-                		float isNegative;
-                		if(theta <= (float)Math.PI){
-                			isNegative = 1.0f;
-                		} else {
-                			isNegative = -1.0f;
-                		}
-						float x = ((float)Math.cos(theta)*(float)Math.cos(phi)) * isNegative;
-						float z = (float)Math.sin((float)phi) * (float)Math.sin((Math.acos(x))) ;
+                		float x = (float) Math.sin(theta) * (float) Math.sin(phi);
+                		float y = (float) Math.cos(theta);
+                		float z = (float) Math.sin(theta) * (float) Math.cos(phi);
+      //           		float isNegative;
+      //           		if(theta <= (float)Math.PI){
+      //           			isNegative = 1.0f;
+      //           		} else {
+      //           			isNegative = -1.0f;
+      //           		}
+						// float x = ((float)Math.cos(theta)*(float)Math.cos(phi)) * isNegative;
+						// float z = (float)Math.sin((float)phi) * (float)Math.sin((Math.acos(x))) ;
 						//System.out.println("With theta = " + theta + " and phi = " + phi + " , we get (" + x + "," + y + "," + z + ").");
 						mesh.positions.add(new Vector3(x,y,z));
 						
@@ -193,37 +196,111 @@ public class MeshGen {
                     System.out.println(mesh.positions.get(q).z);
                 }
 
-                for (int i = 1; i < n; i++){
-                	OBJFace topFanFace = new OBJFace(3, true, true);
-                		topFanFace.positions[0]= 0;
+                for (int i = 2; i < n+1; i++){
+                	if(i == n){
+                		OBJFace topFanFace = new OBJFace(3, true, true);
+                		topFanFace.positions[0]= 1;
                 		topFanFace.positions[1]= i;
                 		topFanFace.positions[2]= i+1;
                 		mesh.faces.add(topFanFace);
+
+                		OBJFace lastFace = new OBJFace(3,true,true);
+                		lastFace.positions[0]= 1;
+                		lastFace.positions[1]= n+1;
+                		lastFace.positions[2]= 2;
+                		mesh.faces.add(lastFace);
+                	} else {
+                	OBJFace topFanFace = new OBJFace(3, true, true);
+                		topFanFace.positions[0]= 1;
+                		topFanFace.positions[1]= i;
+                		topFanFace.positions[2]= i+1;
+                		mesh.faces.add(topFanFace);
+                	}
                 }
 
                
-                // for (int p = 1; p < mesh.positions.size()-1; p++){
-                // 	for (int o = 0; o < mesh.positions.size()-2; p++){
-                // 		OBJFace face1 = new OBJFace(3, true, true);
-                // 		OBJFace face2 = new OBJFace(3, true, true);
+                for (int p = 0; p < m-1; p++){
+                	int down = p*n+1;
+                	int up = (p+1)*n+1;
+                	for (int q=1; q<(n+2); q++){
+                		if(q != (n)){
+	                		OBJFace face1 = new OBJFace(3, true, true);
+	                		OBJFace face2 = new OBJFace(3, true, true);
 
-                // 		face1.positions[0] = 
-	               //      face1.positions[1] = 
-	               //      face1.positions[2] = 
+	                		face1.positions[0] = down+q+1;
+	                		face1.positions[1] = down+q;
+	                		face1.positions[2] = up+q+1;
 
-	               //      face2.positions[0] =
-	               //      face2.positions[1] =
-	               //      face2.positions[2] = 
-                // 	}
-                // }
-                 int bottomCoord = mesh.positions.size();
-                for (int j = bottomCoord-1; j > (bottomCoord - n); j--){
-                	OBJFace bottomFanFace = new OBJFace(3, true, true);
-                		bottomFanFace.positions[0]= bottomCoord;
-                		bottomFanFace.positions[1]= j;
-                		bottomFanFace.positions[2]= j+1;
-                		mesh.faces.add(bottomFanFace);
+	                		face2.positions[0] = down+q;
+	                		face2.positions[1] = up+q;
+	                		face2.positions[2] = up+q+1;
+
+	                		mesh.faces.add(face1);
+	                		mesh.faces.add(face2);
+                		} else {
+                			OBJFace face1 = new OBJFace(3, true, true);
+	                		OBJFace face2 = new OBJFace(3, true, true);
+
+	                		face1.positions[0] = down+q;
+	                		face1.positions[1] = up+q;
+	                		face1.positions[2] = up+1;
+
+	                		face2.positions[0] = down+q+1;
+	                		face2.positions[1] = down+1;
+	                		face2.positions[2] = up;
+
+
+	                		mesh.faces.add(face1);
+	                		mesh.faces.add(face2);
+
+	               //  		OBJFace face3 = new OBJFace(3, true, true);
+
+                // 			face3.positions[0] = down+q+1;
+                // 			face3.positions[1] = up+1;
+                // 			face3.positions[2] = down-q;
+
+            				// mesh.faces.add(face3);
+                		}
+                		
+                	}
+                 	OBJFace face3 = new OBJFace(3, true, true);
+                	OBJFace face4 = new OBJFace(3, true, true);  
+
+                	face3.positions[0] = down+n-1;
+            		face3.positions[1] = up+n;
+            		face3.positions[2] = up;
+
+            		face4.positions[0] = down+n-1;
+            		face4.positions[1] = up;
+            		face4.positions[2] = down-1;   
+
+            		mesh.faces.add(face3);
+                	mesh.faces.add(face4);       	
                 }
+
+                int bottomCoord = mesh.positions.size();
+                for (int j = bottomCoord-1; j > (bottomCoord - n); j--){
+	                if (j == (bottomCoord-n)+1){
+	                	OBJFace bottomFanFace = new OBJFace(3, true, true);
+	                		bottomFanFace.positions[0]= bottomCoord;
+	                		bottomFanFace.positions[1]= j;
+	                		bottomFanFace.positions[2]= j-1;
+	                		mesh.faces.add(bottomFanFace);
+
+	                	OBJFace lastFace2 = new OBJFace(3,true,true);
+	                		lastFace2.positions[0]= bottomCoord;
+	                		lastFace2.positions[1]= bottomCoord - n;
+	                		lastFace2.positions[2]= bottomCoord - 1;
+
+	                		mesh.faces.add(lastFace2);
+	                } else {
+	                	OBJFace bottomFanFace = new OBJFace(3, true, true);
+	                		bottomFanFace.positions[0]= bottomCoord;
+	                		bottomFanFace.positions[1]= j;
+	                		bottomFanFace.positions[2]= j-1;
+	                		mesh.faces.add(bottomFanFace);
+	                }
+	            }
 
                 for (int k=0; k<mesh.faces.size(); k++){
                 	System.out.print("f ");
