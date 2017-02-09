@@ -306,12 +306,12 @@ public class MeshGen {
                 	littler = (float)0.25;
                 }
 
-                float degreesAroundTorus = 360.0f/n;
-                float degreesRing = 360.0f/m;
+                float degreesAroundTorus = 360.0f/m;
+                float degreesRing = 360.0f/n;
                 float dphi = degreesAroundTorus * ((float)Math.PI/180.0f);
                 float dtheta = degreesRing * ((float)Math.PI/180.0f);
                 for (float phi = 0; phi<((Math.PI * 2)); phi=phi+dphi){
-                	for(float theta=(dtheta); theta<(Math.PI * 2); theta=theta+dtheta){
+                	for(float theta=0; theta<(Math.PI * 2); theta=theta+dtheta){
                 		float x = ((float)bigR + ((float)littler * (float)(Math.cos(phi)))) * (float)(Math.cos(theta));
                 		float y = ((float)littler * ((float)Math.sin(phi)));
                 		float z = ((float)bigR + ((float)littler * (float)(Math.cos(phi)))) * (float)(Math.sin(theta));
@@ -325,8 +325,70 @@ public class MeshGen {
                     System.out.print(mesh.positions.get(i).y + " ");
                     System.out.println(mesh.positions.get(i).z);
                 }
-
                 
+
+                for (int p = 0; p < m; p++){
+                	int down = p*n+1;
+                	int up = (p+1)*n+1;
+                	for (int q=0; q<(n); q++){
+                		if(q != (n+1)){
+                			
+	                		OBJFace face1 = new OBJFace(3, true, true);
+	                		OBJFace face2 = new OBJFace(3, true, true);
+
+	                		face1.positions[0] = down+q+1;
+	                		face1.positions[1] = down+q;
+	                		face1.positions[2] = up+q+1;
+
+	                		face2.positions[0] = down+q;
+	                		face2.positions[1] = up+q;
+	                		face2.positions[2] = up+q+1;
+
+	                		mesh.faces.add(face1);
+	                		mesh.faces.add(face2);
+		                	
+                		} else {
+                			if (p == (0)){
+	                			OBJFace face1 = new OBJFace(3, true, true);
+		                		OBJFace face2 = new OBJFace(3, true, true);
+
+		                		face1.positions[0] = down+q;
+		                		face1.positions[1] = down+1;
+		                		face1.positions[2] = down;
+
+		                		face2.positions[0] = down+q;
+		                		face2.positions[1] = down;
+		                		face2.positions[2] = up;
+
+
+		                		mesh.faces.add(face1);
+		                		mesh.faces.add(face2);
+		                	}
+
+
+                		}
+                		
+                	}
+              //    	OBJFace face3 = new OBJFace(3, true, true);
+              //   	OBJFace face4 = new OBJFace(3, true, true);  
+
+              //   	face3.positions[0] = down+n-1;
+            		// face3.positions[1] = up+n;
+            		// face3.positions[2] = up;
+
+            		// face4.positions[0] = down+n-1;
+            		// face4.positions[1] = up;
+            		// face4.positions[2] = down-1;   
+
+            		// mesh.faces.add(face3);
+              //   	mesh.faces.add(face4);       	
+                }
+                for (int k=0; k<mesh.faces.size(); k++){
+                	System.out.print("f ");
+                	System.out.print(mesh.faces.get(k).positions[0] + " ");
+                    System.out.print(mesh.faces.get(k).positions[1] + " ");
+                    System.out.println(mesh.faces.get(k).positions[2]);
+                }
 
             } else {
             	System.out.println("Please input a valid geometry");
