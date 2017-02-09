@@ -22,8 +22,6 @@ public class MeshGen {
                 }
                 
                 float dtheta = (2.0f * (float)Math.PI / n);
-                // System.out.println(dtheta);
-                // top face, y=1
                 float y = 1.0f;
 
                 for (float theta=0.0f; theta<(Math.PI * 2); theta=theta+dtheta) {
@@ -40,25 +38,25 @@ public class MeshGen {
                     System.out.println(mesh.positions.get(i).z);
                 }
 
-                mesh.uvs.add(new Vector2((float)0,(float)0));
-       			mesh.uvs.add(new Vector2((float)0,(float)0.5));
+          //       mesh.uvs.add(new Vector2((float)0,(float)0));
+       			// mesh.uvs.add(new Vector2((float)0,(float)0.5));
 
-       			for (int acc = 5; acc < mesh.positions.size(); acc+=2){
-       				// System.out.println(acc);
-       				float proportion = (float)(acc-3)/(2*n);
+       			// for (int acc = 5; acc < mesh.positions.size(); acc+=2){
+       			// 	// System.out.println(acc);
+       			// 	float proportion = (float)(acc-3)/(2*n);
 
-       				mesh.uvs.add(new Vector2(proportion, (float)0 ));
-       				mesh.uvs.add(new Vector2(proportion, (float)0.5 ));
-       			}
+       			// 	mesh.uvs.add(new Vector2(proportion, (float)0 ));
+       			// 	mesh.uvs.add(new Vector2(proportion, (float)0.5 ));
+       			// }
 
-       			mesh.uvs.add(new Vector2((float)1,(float)0));
-       			mesh.uvs.add(new Vector2((float)1,(float)0.5));
+       			// mesh.uvs.add(new Vector2((float)1,(float)0));
+       			// mesh.uvs.add(new Vector2((float)1,(float)0.5));
 
-       			for(int q=0; q<mesh.uvs.size(); q++){
-       				System.out.print("vt ");
-                    System.out.print(mesh.uvs.get(q).x + " ");
-                    System.out.println(mesh.uvs.get(q).y);
-       			}
+       			// for(int q=0; q<mesh.uvs.size(); q++){
+       			// 	System.out.print("vt ");
+          //           System.out.print(mesh.uvs.get(q).x + " ");
+          //           System.out.println(mesh.uvs.get(q).y);
+       			// }
                 
                 for (int k = 3; k < 2 * n+2; k += 2) {
                 	if(k!=(2*n+1)){
@@ -99,10 +97,6 @@ public class MeshGen {
 	                    System.out.print(mesh.faces.get(k-2).positions[1] + "/" + ((2*n+2)-(k-1)) + " ");
 	                    System.out.println(mesh.faces.get(k-2).positions[2] + "/" + ((2*n+2)-k));
                 }
-//                for(int l=0; l<(2*n); l++){
-//                  	System.out.println(mesh.faces);
-//                }
-//                System.out.println("");
 
        			for(int h = 0; h < (2*n); h+=2){
        				if(h<(2*n-2)){
@@ -143,8 +137,6 @@ public class MeshGen {
                 }
        			
             } else if (geo.equals("sphere")){
-            	//center points
-       			
        			
        			int n;
        			int m;
@@ -167,20 +159,10 @@ public class MeshGen {
                 float degreesrotation = 360.0f / n;
                 float dphi = (float)degreesrotation * ((float)Math.PI/180.0f);
                 for(float theta=(dtheta); theta<((float)Math.PI); theta=theta+dtheta){
-					// float y = (float)(Math.sin(theta));
                 	for (float phi = 0; phi<((Math.PI * 2)); phi=phi+dphi){
                 		float x = (float) Math.sin(theta) * (float) Math.sin(phi);
                 		float y = (float) Math.cos(theta);
                 		float z = (float) Math.sin(theta) * (float) Math.cos(phi);
-      //           		float isNegative;
-      //           		if(theta <= (float)Math.PI){
-      //           			isNegative = 1.0f;
-      //           		} else {
-      //           			isNegative = -1.0f;
-      //           		}
-						// float x = ((float)Math.cos(theta)*(float)Math.cos(phi)) * isNegative;
-						// float z = (float)Math.sin((float)phi) * (float)Math.sin((Math.acos(x))) ;
-						//System.out.println("With theta = " + theta + " and phi = " + phi + " , we get (" + x + "," + y + "," + z + ").");
 						mesh.positions.add(new Vector3(x,y,z));
 						
 					}
@@ -252,14 +234,6 @@ public class MeshGen {
 
 	                		mesh.faces.add(face1);
 	                		mesh.faces.add(face2);
-
-	               //  		OBJFace face3 = new OBJFace(3, true, true);
-
-                // 			face3.positions[0] = down+q+1;
-                // 			face3.positions[1] = up+1;
-                // 			face3.positions[2] = down-q;
-
-            				// mesh.faces.add(face3);
                 		}
                 		
                 	}
@@ -309,27 +283,53 @@ public class MeshGen {
                     System.out.println(mesh.faces.get(k).positions[2]);
                 }
 
-            } else {
+            } else if (geo.equals("torus")){
             	int n;
        			int m;
-       			float r;
+       			float littler;
+       			float bigR = 1.0f;
        			if (args.length == 5){
                 	n = Integer.parseInt(args[1]);
                 	m = Integer.parseInt(args[2]);
-                	r = Float.parseFloat(args[3]);
+                	littler = Float.parseFloat(args[3]);
        			} else if(args.length == 4){
                 	n = Integer.parseInt(args[1]);
                 	m = Integer.parseInt(args[2]);
-                	r = (float)0.25;
+                	littler = (float)0.25;
                 } else if (args.length == 3){
                 	n = Integer.parseInt(args[1]);
                 	m = 16;
-                	r = (float)0.25;
+                	littler = (float)0.25;
                 } else {
-                	n = 4;
-                	m = 4;
-                	r = (float)0.25;
+                	n = 32;
+                	m = 16;
+                	littler = (float)0.25;
                 }
+
+                float degreesAroundTorus = 360.0f/n;
+                float degreesRing = 360.0f/m;
+                float dphi = degreesAroundTorus * ((float)Math.PI/180.0f);
+                float dtheta = degreesRing * ((float)Math.PI/180.0f);
+                for (float phi = 0; phi<((Math.PI * 2)); phi=phi+dphi){
+                	for(float theta=(dtheta); theta<(Math.PI * 2); theta=theta+dtheta){
+                		float x = ((float)bigR + ((float)littler * (float)(Math.cos(phi)))) * (float)(Math.cos(theta));
+                		float y = ((float)littler * ((float)Math.sin(phi)));
+                		float z = ((float)bigR + ((float)littler * (float)(Math.cos(phi)))) * (float)(Math.sin(theta));
+						mesh.positions.add(new Vector3(x,y,z));
+                	}
+                }
+                
+                for (int i=0; i<mesh.positions.size(); i++) {
+                    System.out.print("v ");
+                    System.out.print(mesh.positions.get(i).x + " ");
+                    System.out.print(mesh.positions.get(i).y + " ");
+                    System.out.println(mesh.positions.get(i).z);
+                }
+
+                
+
+            } else {
+            	System.out.println("Please input a valid geometry");
             }
         }
 	}
