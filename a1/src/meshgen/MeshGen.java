@@ -410,7 +410,7 @@ public class MeshGen {
 			                 	face1.positions[1] = firstVert+ n-1;
 			                 	face1.positions[2] = firstVert+ n;
 
-			                 	face2.positions[0] = firstVert+(2*n)-1;
+			                 	face2.positions[0] = firstVert+n;
 			                 	face2.positions[1] = firstVert+n-1;
 			                 	face2.positions[2] = firstVert+(2*n)-1; 
 
