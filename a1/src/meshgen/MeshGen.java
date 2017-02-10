@@ -296,6 +296,11 @@ public class MeshGen {
                 		float y = ((float)littler * ((float)Math.sin(phi)));
                 		float z = ((float)bigR + ((float)littler * (float)(Math.cos(phi)))) * (float)(Math.sin(theta));
 						mesh.positions.add(new Vector3(x,y,z));
+
+						float xN = ((float)littler * (float)(Math.cos(phi))) * (float)(Math.cos(theta));
+						float yN = y;
+						float zN = ((float)littler * (float)(Math.cos(phi))) * (float)(Math.sin(theta));
+						mesh.normals.add(new Vector3(xN,yN,zN));
                 	}
                 }
                 
@@ -305,7 +310,38 @@ public class MeshGen {
                     System.out.print(mesh.positions.get(i).y + " ");
                     System.out.println(mesh.positions.get(i).z);
                 }
-                
+
+          		for (int v = 0; v<m; v++){
+          			float dv;
+          			if(v != (m-1)){
+          				dv = (float)v/(float)m;
+          			} else {
+          				dv = (float)(m-v)/(float)(m);
+          			}
+          			for (int u=0; u<n; u++){
+          				if (u!=(n-1)){
+	          				float du = (float)u/(float)n;
+	          				mesh.uvs.add(new Vector2(du,dv));
+	          			} else {
+	          				float du = (float)(n-u)/(float)n;
+	          				mesh.uvs.add(new Vector2(du,dv));
+	          			}
+          			}
+          		}
+
+          		for(int q=0; q<mesh.uvs.size(); q++){
+       				System.out.print("vt ");
+                    System.out.print(mesh.uvs.get(q).x + " ");
+                    System.out.println(mesh.uvs.get(q).y);
+       			}
+
+       			for (int i=0; i<mesh.normals.size(); i++) {
+                    System.out.print("vn ");
+                    System.out.print(mesh.normals.get(i).x + " ");
+                    System.out.print(mesh.normals.get(i).y + " ");
+                    System.out.println(mesh.normals.get(i).z);
+                }
+
 
                 for (int p = 0; p < m; p++){
                 	int down = p*n+1;
@@ -349,10 +385,21 @@ public class MeshGen {
                 }
 
                 int bottomCoord = mesh.positions.size();
-                for (int j = bottomCoord; j > (bottomCoord - n); j--){
-                	if(j == (bottomCoord - n + 1)){
+                for (int j = bottomCoord; j > (bottomCoord - n -1); j--){
+                	if(j == (bottomCoord - n )){
 		                OBJFace bottomStrip1= new OBJFace(3,true,true);
 		                OBJFace bottomStrip2= new OBJFace(3,true,true);
+
+		             //    bottomStrip1.positions[0]= n - (bottomCoord - j);
+		             //    bottomStrip1.positions[1]= j-1;
+		             //    bottomStrip1.positions[2]= n- (bottomCoord - (j-1));
+
+		             //    bottomStrip2.positions[0]= n - (bottomCoord - (j-1)) + 1;
+		             //    bottomStrip2.positions[1]= j;
+		             //    bottomStrip2.positions[2]= j-1;
+
+		             //    mesh.faces.add(bottomStrip1);
+			            // mesh.faces.add(bottomStrip2);
 
 			            OBJFace specialCase1 = new OBJFace(3, true, true);
 			            OBJFace specialCase2 = new OBJFace(3, true, true);
@@ -384,12 +431,28 @@ public class MeshGen {
 		            mesh.faces.add(bottomStrip2);
 		        	}
 	            }
+                for (int k=0; k<(mesh.faces.size()); k++){
+                	if (k<(2*n)){
+                		if(k%2==1){
+		                	System.out.print("f ");
+		                	//(2*n+1) - (mesh.faces.get(k).positions[0])
+		                	System.out.print(mesh.faces.get(k).positions[0] + "/" + (mesh.faces.get(k).positions[0]+1) + "/" + mesh.faces.get(k).positions[0] + " ");
+		                    System.out.print(mesh.faces.get(k).positions[1] + "/" + (mesh.faces.get(k).positions[2]+ 1) + "/" + mesh.faces.get(k).positions[1] + " ");
+		                    System.out.println(mesh.faces.get(k).positions[2] + "/" + (mesh.faces.get(k).positions[1] +1) + "/" + mesh.faces.get(k).positions[2]);
+		                } else {
+		                	System.out.print("f ");
+		                	//(2*n+1) - (mesh.faces.get(k).positions[0])
+		                	System.out.print(mesh.faces.get(k).positions[0] + "/" + (mesh.faces.get(k).positions[2]+1) + "/" + mesh.faces.get(k).positions[0] + " ");
+		                    System.out.print(mesh.faces.get(k).positions[1] + "/" + (mesh.faces.get(k).positions[1]+ 1) + "/" + mesh.faces.get(k).positions[1] + " ");
+		                    System.out.println(mesh.faces.get(k).positions[2] + "/" + (mesh.faces.get(k).positions[0] +1) + "/" + mesh.faces.get(k).positions[2]);
+		                }
+	                } else {
+	                	System.out.print("f ");
+	                	System.out.print(mesh.faces.get(k).positions[0] + "/" + (mesh.positions.size() - mesh.faces.get(k).positions[0] +1 ) + "/" + mesh.faces.get(k).positions[0] + " ");
+	                    System.out.print(mesh.faces.get(k).positions[1] + "/" + (mesh.positions.size() - mesh.faces.get(k).positions[1] +1 ) + "/" + mesh.faces.get(k).positions[1] + " ");
+	                    System.out.println(mesh.faces.get(k).positions[2] + "/" + (mesh.positions.size() - mesh.faces.get(k).positions[2] +1 ) + "/" + mesh.faces.get(k).positions[2]);	
+	                }
 
-                for (int k=0; k<mesh.faces.size(); k++){
-                	System.out.print("f ");
-                	System.out.print(mesh.faces.get(k).positions[0] + " ");
-                    System.out.print(mesh.faces.get(k).positions[1] + " ");
-                    System.out.println(mesh.faces.get(k).positions[2]);
                 }
 
             } else {
