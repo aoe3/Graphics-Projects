@@ -27,7 +27,7 @@ public class OBJFace {
 	 * The starting index used in this.positions, this.uvs, and this.normals.
 	 * Must either be 0 or 1.
 	 */
-	public static int indexBase = 0;
+	public static int indexBase = 1;
 
 	/**
 	 * Returns the number of vertices associated with this face.
