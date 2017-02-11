@@ -684,15 +684,15 @@ public class MeshGen {
                             if (i==2*n-2) {
                                 System.out.println("Setting normals");
                                 System.out.println(n*(m+1)+j+2);
-                                mesh.faces.get(faceIdx).uvs[0] = n*(m+1)+j+2;
-                                mesh.faces.get(faceIdx).uvs[1] = n*(m+1)+j+1;
+                                mesh.faces.get(faceIdx).uvs[0] = n*(m+1);
+                                mesh.faces.get(faceIdx).uvs[1] = n*(m+1)+j+2;
                                 mesh.faces.get(faceIdx).uvs[2] = mesh.faces.get(faceIdx).positions[2];
                                 mesh.faces.get(faceIdx).normals[0] = mesh.faces.get(faceIdx).positions[0];
                                 mesh.faces.get(faceIdx).normals[1] = mesh.faces.get(faceIdx).positions[1];
                                 mesh.faces.get(faceIdx).normals[2] = mesh.faces.get(faceIdx).positions[2];
 
-                                mesh.faces.get(faceIdx+1).uvs[0] = n*(m+1);
-                                mesh.faces.get(faceIdx+1).uvs[1] = n*(m+1)+j+2;
+                                mesh.faces.get(faceIdx+1).uvs[0] = n*(m+1)+j+2;
+                                mesh.faces.get(faceIdx+1).uvs[1] = n*(m+1)+j+1;
                                 mesh.faces.get(faceIdx+1).uvs[2] = mesh.faces.get(faceIdx+1).positions[2];
                                 mesh.faces.get(faceIdx+1).normals[0] = mesh.faces.get(faceIdx+1).positions[0];
                                 mesh.faces.get(faceIdx+1).normals[1] = mesh.faces.get(faceIdx+1).positions[1];
