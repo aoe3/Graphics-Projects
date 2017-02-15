@@ -437,9 +437,9 @@ public class MeshGen {
                 float dtheta = degreesRing * ((float)Math.PI/180.0f);
 
                 for (int a=0; a<n; a++){
-                    float phi = a*dphi;
+                    float phi = a*dphi-(float)Math.PI;
                     for(int b=0; b<n; b++){
-                        float theta = b*dtheta;
+                        float theta = b*dtheta-(float)Math.PI;
                         float x = ((float)bigR + ((float)littler * (float)(Math.cos(phi)))) * (float)(Math.cos(theta));
                         float y = ((float)littler * ((float)Math.sin(phi)));
                         float z = ((float)bigR + ((float)littler * (float)(Math.cos(phi)))) * (float)(Math.sin(theta));
@@ -451,21 +451,6 @@ public class MeshGen {
                         mesh.normals.add((new Vector3(xN,yN,zN)).normalize());
                     }
                 }
-
-//                for (int i=0; i<mesh.positions.size(); i++) {
-//                    System.out.print("v ");
-//                    System.out.print(mesh.positions.get(i).x + " ");
-//                    System.out.print(mesh.positions.get(i).y + " ");
-//                    System.out.println(mesh.positions.get(i).z);
-//                }
-
-//                float dv = 1.0f/m;
-//                float du = 1.0f/n;
-//                for (int v=0; v<=m; v++) {
-//                    for (int u=0; u<=n; u++) {
-//                        mesh.uvs.add(new Vector2(u*du,v*dv));
-//                    }
-//                }
 
                 for (int v = 0; v<m+1; v++){
                     float dv = (float)v/(float)m;
@@ -481,45 +466,11 @@ public class MeshGen {
                     mesh.uvs.add(new Vector2(0.0f, dv));
                 }
 
-//                for(int q=0; q<mesh.uvs.size(); q++){
-//                    System.out.print("vt ");
-//                    System.out.print(mesh.uvs.get(q).x + " ");
-//                    System.out.println(mesh.uvs.get(q).y);
-//                }
-
-                // for(int d=1; d<m+1; d++){
-                // 	for (int e; e<n+1; e++){
-                // 		int fstV = (d-1)*()+(e-1);
-                // 		int sndV = fstV + 1;
-                // 		int trdV = fstV + n;
-                // 		int fthV = trdV + 1;
-                // 	}
-                // }
-
-//                for (int i=0; i<mesh.normals.size(); i++) {
-//                    System.out.print("vn ");
-//                    System.out.print(mesh.normals.get(i).x + " ");
-//                    System.out.print(mesh.normals.get(i).y + " ");
-//                    System.out.println(mesh.normals.get(i).z);
-//                }
-
-
-
                 for (int p = 0; p < m; p++){
                     int firstVert = (p*n) + 1;
                     for (int q=0; q<n; q++){
-                        int fstV;
-                        int sndV;
-                        int trdV;
-                        int fthV;
                         if(q == (n-1)){
                             if(p == m-1){
-                                fstV = ((p)*(n))+ q ;
-                                sndV = fstV - 1;
-                                trdV = fstV + n;
-                                fthV = trdV + 1;
-
-
                                 OBJFace face3 = new OBJFace(3, true, true);
                                 OBJFace face4 = new OBJFace(3, true, true);
 
@@ -531,39 +482,9 @@ public class MeshGen {
                                 face4.positions[1] = firstVert;
                                 face4.positions[2] = firstVert+n-1;
 
-                                // //DO NOT CHANGE
                                 mesh.faces.add(face3);
-//                                mesh.faces.get(mesh.faces.size()-1).uvs[0] = fstV;
-//                                mesh.faces.get(mesh.faces.size()-1).uvs[1] = trdV;
-//                                mesh.faces.get(mesh.faces.size()-1).uvs[2] = fthV;
-//                                mesh.faces.get(mesh.faces.size()-1).normals[0] = mesh.faces.get(mesh.faces.size()-1).positions[0];
-//                                mesh.faces.get(mesh.faces.size()-1).normals[1] = mesh.faces.get(mesh.faces.size()-1).positions[1];
-//                                mesh.faces.get(mesh.faces.size()-1).normals[2] = mesh.faces.get(mesh.faces.size()-1).positions[2];
-
-                                fstV = ((p)*(n))+(q) + m + n + 1;
-                                sndV = fstV -n + 1;
-                                trdV = fstV + n;
-                                fthV = trdV -n;
-
                                 mesh.faces.add(face4);
-//                                mesh.faces.get(mesh.faces.size()-1).uvs[0] = firstVert+n-1;
-//                                mesh.faces.get(mesh.faces.size()-1).uvs[1] = firstVert;
-//                                mesh.faces.get(mesh.faces.size()-1).uvs[2] = firstVert+n-1;
-//                                mesh.faces.get(mesh.faces.size()-1).normals[0] = mesh.faces.get(mesh.faces.size()-1).positions[0];
-//                                mesh.faces.get(mesh.faces.size()-1).normals[1] = mesh.faces.get(mesh.faces.size()-1).positions[1];
-//                                mesh.faces.get(mesh.faces.size()-1).normals[2] = mesh.faces.get(mesh.faces.size()-1).positions[2];
-
-
-
                             } else {
-                                fstV = ((p)*(n))+(q) +1;
-                                sndV = fstV + 1;
-                                trdV = fstV + n;
-                                fthV = trdV + 1;
-
-                                //DO NOT TOUCH
-
-
                                 OBJFace face1 = new OBJFace(3, true, true);
                                 OBJFace face2 = new OBJFace(3, true, true);
 
@@ -577,31 +498,9 @@ public class MeshGen {
 
                                 mesh.faces.add(face1);
                                 mesh.faces.add(face2);
-
-//                                mesh.faces.add(face1);
-//                                mesh.faces.get(mesh.faces.size()-1).uvs[0] = firstVert + n;
-//                                mesh.faces.get(mesh.faces.size()-1).uvs[1] = firstVert + n-1;
-//                                mesh.faces.get(mesh.faces.size()-1).uvs[2] = firstVert + (2*n) ;
-//                                mesh.faces.get(mesh.faces.size()-1).normals[0] = mesh.faces.get(mesh.faces.size()-1).positions[0];
-//                                mesh.faces.get(mesh.faces.size()-1).normals[1] = mesh.faces.get(mesh.faces.size()-1).positions[1];
-//                                mesh.faces.get(mesh.faces.size()-1).normals[2] = mesh.faces.get(mesh.faces.size()-1).positions[2];
-//
-//                                mesh.faces.add(face2);
-//                                mesh.faces.get(mesh.faces.size()-1).uvs[0] = firstVert+(2*n);
-//                                mesh.faces.get(mesh.faces.size()-1).uvs[1] = firstVert+n-1;
-//                                mesh.faces.get(mesh.faces.size()-1).uvs[2] = firstVert+(2*n)+1;
-//                                mesh.faces.get(mesh.faces.size()-1).normals[0] = mesh.faces.get(mesh.faces.size()-1).positions[0];
-//                                mesh.faces.get(mesh.faces.size()-1).normals[1] = mesh.faces.get(mesh.faces.size()-1).positions[1];
-//                                mesh.faces.get(mesh.faces.size()-1).normals[2] = mesh.faces.get(mesh.faces.size()-1).positions[2];
                             }
-
                         } else {
-
                             if(p==m-1){
-                                fstV = ((p)*(n))+(q) ;
-                                sndV = fstV + 1;
-                                trdV = fstV + n;
-                                fthV = trdV + 1;
                                 OBJFace face3 = new OBJFace(3, true, true);
                                 OBJFace face4 = new OBJFace(3, true, true);
 
@@ -615,31 +514,7 @@ public class MeshGen {
 
                                 mesh.faces.add(face3);
                                 mesh.faces.add(face4);
-
-//                                mesh.faces.add(face3);
-//                                mesh.faces.get(mesh.faces.size()-1).uvs[0] = fstV;
-//                                mesh.faces.get(mesh.faces.size()-1).uvs[1] = trdV;
-//                                mesh.faces.get(mesh.faces.size()-1).uvs[2] = fthV;
-//                                mesh.faces.get(mesh.faces.size()-1).normals[0] = mesh.faces.get(mesh.faces.size()-1).positions[0];
-//                                mesh.faces.get(mesh.faces.size()-1).normals[1] = mesh.faces.get(mesh.faces.size()-1).positions[1];
-//                                mesh.faces.get(mesh.faces.size()-1).normals[2] = mesh.faces.get(mesh.faces.size()-1).positions[2];
-//
-//                                mesh.faces.add(face4);
-//                                mesh.faces.get(mesh.faces.size()-1).uvs[0] = fthV;
-//                                mesh.faces.get(mesh.faces.size()-1).uvs[1] = sndV;
-//                                mesh.faces.get(mesh.faces.size()-1).uvs[2] = fstV;
-//                                mesh.faces.get(mesh.faces.size()-1).normals[0] = mesh.faces.get(mesh.faces.size()-1).positions[0];
-//                                mesh.faces.get(mesh.faces.size()-1).normals[1] = mesh.faces.get(mesh.faces.size()-1).positions[1];
-//                                mesh.faces.get(mesh.faces.size()-1).normals[2] = mesh.faces.get(mesh.faces.size()-1).positions[2];
-
-
-
                             } else {
-                                fstV = ((p)*(n))+(q) +1;
-                                sndV = fstV + 1;
-                                trdV = fstV + n;
-                                fthV = trdV + 1;
-                                //DO NOT TOUCH
                                 OBJFace face1 = new OBJFace(3, true, true);
                                 OBJFace face2 = new OBJFace(3, true, true);
 
@@ -653,27 +528,8 @@ public class MeshGen {
 
                                 mesh.faces.add(face1);
                                 mesh.faces.add(face2);
-
-//                                mesh.faces.add(face1);
-//                                mesh.faces.get(mesh.faces.size()-1).uvs[0] = firstVert+q+1;
-//                                mesh.faces.get(mesh.faces.size()-1).uvs[1] = firstVert+q;
-//                                mesh.faces.get(mesh.faces.size()-1).uvs[2] = firstVert+q+n+1;
-//                                mesh.faces.get(mesh.faces.size()-1).normals[0] = mesh.faces.get(mesh.faces.size()-1).positions[0];
-//                                mesh.faces.get(mesh.faces.size()-1).normals[1] = mesh.faces.get(mesh.faces.size()-1).positions[1];
-//                                mesh.faces.get(mesh.faces.size()-1).normals[2] = mesh.faces.get(mesh.faces.size()-1).positions[2];
-//
-//                                mesh.faces.add(face2);
-//                                mesh.faces.get(mesh.faces.size()-1).uvs[0] = firstVert+q;
-//                                mesh.faces.get(mesh.faces.size()-1).uvs[1] = firstVert+q+n;
-//                                mesh.faces.get(mesh.faces.size()-1).uvs[2] = firstVert+q+n+1;
-//                                mesh.faces.get(mesh.faces.size()-1).normals[0] = mesh.faces.get(mesh.faces.size()-1).positions[0];
-//                                mesh.faces.get(mesh.faces.size()-1).normals[1] = mesh.faces.get(mesh.faces.size()-1).positions[1];
-//                                mesh.faces.get(mesh.faces.size()-1).normals[2] = mesh.faces.get(mesh.faces.size()-1).positions[2];
-
-
                             }
                         }
-
                     }
                 }
 
@@ -682,8 +538,6 @@ public class MeshGen {
                         for (int i=0; i<2*n; i+=2) {
                             int faceIdx = 2*n*j+i;
                             if (i==2*n-2) {
-                                System.out.println("Setting normals");
-                                System.out.println(n*(m+1)+j+2);
                                 mesh.faces.get(faceIdx).uvs[0] = n*(m+1);
                                 mesh.faces.get(faceIdx).uvs[1] = n*(m+1)+j+2;
                                 mesh.faces.get(faceIdx).uvs[2] = mesh.faces.get(faceIdx).positions[2];
@@ -698,10 +552,6 @@ public class MeshGen {
                                 mesh.faces.get(faceIdx+1).normals[1] = mesh.faces.get(faceIdx+1).positions[1];
                                 mesh.faces.get(faceIdx+1).normals[2] = mesh.faces.get(faceIdx+1).positions[2];
                             } else {
-                                System.out.println("Setting normals");
-                                System.out.println(faceIdx);
-                                System.out.println(i);
-                                System.out.println("");
                                 mesh.faces.get(faceIdx).uvs[0] = mesh.faces.get(faceIdx).positions[0];
                                 mesh.faces.get(faceIdx).uvs[1] = mesh.faces.get(faceIdx).positions[1];
                                 mesh.faces.get(faceIdx).uvs[2] = n*(m+1)-i/2;
@@ -721,7 +571,6 @@ public class MeshGen {
                         for (int i=0; i<2*n; i+=2) {
                             int faceIdx = 2*n*j+i;
                             if (i==2*n-2) {
-                                System.out.println("Setting normals");
                                 mesh.faces.get(faceIdx).uvs[0] = n*(m+1)+j+1;
                                 mesh.faces.get(faceIdx).uvs[1] = mesh.faces.get(faceIdx).positions[1];
                                 mesh.faces.get(faceIdx).uvs[2] = n*(m+1)+j+2;
@@ -736,7 +585,6 @@ public class MeshGen {
                                 mesh.faces.get(faceIdx+1).normals[1] = mesh.faces.get(faceIdx+1).positions[1];
                                 mesh.faces.get(faceIdx+1).normals[2] = mesh.faces.get(faceIdx+1).positions[2];
                             } else {
-                                System.out.println("Setting normals");
                                 mesh.faces.get(faceIdx).uvs[0] = mesh.faces.get(faceIdx).positions[0];
                                 mesh.faces.get(faceIdx).uvs[1] = mesh.faces.get(faceIdx).positions[1];
                                 mesh.faces.get(faceIdx).uvs[2] = mesh.faces.get(faceIdx).positions[2];
@@ -755,23 +603,9 @@ public class MeshGen {
                     }
                 }
 
-
-
-
-
-//                for(int k=0; k<mesh.faces.size(); k++){
-//                    System.out.print("f ");
-//                    System.out.print(mesh.faces.get(k).positions[0] + "/" + mesh.faces.get(k).uvs[0] + "/" + mesh.faces.get(k).normals[0] + " ");
-//                    System.out.print(mesh.faces.get(k).positions[1] + "/"+ mesh.faces.get(k).uvs[1] +"/" + mesh.faces.get(k).normals[1] + " ");
-//                    System.out.println(mesh.faces.get(k).positions[2] + "/"+ mesh.faces.get(k).uvs[2] +"/" + mesh.faces.get(k).normals[2]);
-//                }
-
-                System.out.println("# FACES: " + mesh.faces.size());
-
-
                 // write to .obj file
                 try {
-                    mesh.writeOBJ("C:\\Users\\Altair\\Documents\\Graphics\\torus.obj");
+                    mesh.writeOBJ(f);
                 } catch (IOException e) {
                     System.out.println(".obj write failed");
                 }

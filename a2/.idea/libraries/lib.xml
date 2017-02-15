@@ -1,0 +1,20 @@
+<component name="libraryTable">
+  <library name="lib">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/deps/lib/jinput.jar!/" />
+      <root url="jar://$PROJECT_DIR$/deps/lib/openexrjni-test.jar!/" />
+      <root url="jar://$PROJECT_DIR$/deps/lib/asm-debug-all.jar!/" />
+      <root url="jar://$PROJECT_DIR$/deps/lib/lwjgl.jar!/" />
+      <root url="jar://$PROJECT_DIR$/deps/lib/lzma.jar!/" />
+      <root url="jar://$PROJECT_DIR$/deps/lib/AppleJavaExtensions.jar!/" />
+      <root url="jar://$PROJECT_DIR$/deps/lib/lwjgl_util.jar!/" />
+      <root url="jar://$PROJECT_DIR$/deps/lib/lwjgl_util_applet.jar!/" />
+      <root url="jar://$PROJECT_DIR$/deps/lib/lwjgl_test.jar!/" />
+      <root url="jar://$PROJECT_DIR$/deps/lib/openexrjni-3.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/deps/lib/lwjgl-debug.jar!/" />
+      <root url="jar://$PROJECT_DIR$/deps/lib/openexrjni-3.0.0-javadoc.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
