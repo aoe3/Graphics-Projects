@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Iterator;
 
+import egl.math.Vector3d;
 import ray1.camera.Camera;
 import egl.math.Colorf;
 import ray1.shader.Shader;
@@ -134,6 +135,7 @@ public class Scene {
 		//		    5) Set outRecord to the IntersectionRecord of the first object hit.
 		//		    6) If there was an intersection, return true; otherwise return false.
 
+		IntersectionRecord closest = null;
 		for (int i=0; i<surfaces.size(); i++) {
 			IntersectionRecord record = new IntersectionRecord();
 			Ray ray = new Ray(rayIn);
@@ -141,18 +143,21 @@ public class Scene {
 			if (surface.intersect(record, ray)) {
 				// STEP 3
 				if (record.t <= ray.end) {
+					closest = record;
 					// STEP 4
 					if (anyIntersection) {
 						return true;
 					}
-
-					// STEP 5
-					outRecord.set(record);
-
-					return true;
 				}
 			}
 		}
-		return false;
+
+		if (closest != null) {
+			// STEP 5 & 6
+			outRecord.set(closest);
+			return true;
+		} else {
+			return false;
+		}
 	}
 }
