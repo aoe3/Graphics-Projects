@@ -134,8 +134,19 @@ public class Scene {
 		//		    5) Set outRecord to the IntersectionRecord of the first object hit.
 		//		    6) If there was an intersection, return true; otherwise return false.
 
+		IntersectionRecord current = new IntersectionRecord();
+		IntersectionRecord best = new IntersectionRecord();
+		Vector3d origin = rayIn.origin;
+		Vector3d direction = rayIn.direction;
+		Ray copy = new Ray(origin, direction);
+		double t = Double.MAX_VALUE;
+				
 		for (int i=0; i<surfaces.size(); i++) {
-			if (surfaces.get(i).intersect(outRecord, rayIn)) {
+			if (surfaces.get(i).intersect(current, copy)) {
+				if (current.t < t){
+					best.set(current);
+					t = current.t;
+				}
 				// STEP 3 HERE
 				// ...
 
@@ -143,12 +154,19 @@ public class Scene {
 					return true;
 				}
 
-				// STEP 5 HERE
-				// ...
-
-				return true;
+				
 			}
+			
 		}
-		return false;
+		// STEP 5 HERE
+		// ...
+		
+		//Check if best was set
+		if(t != Double.MAX_VALUE ){
+			outRecord.set(best);
+			return true;
+		} else {
+			return false;
+		}
 	}
 }
