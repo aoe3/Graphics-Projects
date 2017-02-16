@@ -53,7 +53,13 @@ public class Lambertian extends Shader {
 			if (isShadowed(scene,scene.getLights().get(i),record,ray)) {
 				return;
 			}
-			Vector3d dir = record.location.clone().sub(scene.getLights().get(i));
+			Vector3d dir = (record.location.clone().sub(scene.getLights().get(i).position)).normalize();
+			double nDotL = (record.normal.clone()).dot(dir.clone());
+			double color =(Math.max(nDotL, 0.0));
+			float red = (float) (diffuseColor.x * scene.getLights().get(i).intensity.clone().x * color);
+			float grn = (float) (diffuseColor.y * scene.getLights().get(i).intensity.clone().y * color);
+			float blu = (float) (diffuseColor.z * scene.getLights().get(i).intensity.clone().z * color);
+			outIntensity.set((outIntensity.x + red), (outIntensity.y + grn), (outIntensity.z + blu));
 		}
 	}
 
