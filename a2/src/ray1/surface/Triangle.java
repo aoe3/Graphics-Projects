@@ -61,7 +61,7 @@ public class Triangle extends Surface {
    */
   public boolean intersect(IntersectionRecord outRecord, Ray rayIn) {
     // TODO#A2: fill in this function.
-	Vector3 v0 = owner.getMesh().getPosition(face,0);
+	  Vector3 v0 = owner.getMesh().getPosition(face,0);
 	  Vector3 v1 = owner.getMesh().getPosition(face,1);
 	  Vector3 v2 = owner.getMesh().getPosition(face,2);
 	  
@@ -82,22 +82,23 @@ public class Triangle extends Surface {
 	  Matrix3d bigA = new Matrix3d(abc,def,direction);
 	  Vector3d xMinP = new Vector3d(xAP, yAP, zAP);
 	  
-	  //Might need to flip this equation in order to get correct vector
 	  Vector3d betaGammaT = bigA.clone().invert().mul(xMinP.clone());
 	  
 	  double beta = betaGammaT.clone().x;
 	  double gamma = betaGammaT.clone().y;
 	  double t = betaGammaT.clone().z;
 	  //USED FOR TEXTURES
-	  //double alpha = 1 - beta - gamma;
+	  double alpha = (1.0 - beta - gamma);
+	  
 	  
 	  
 	  if (beta > 0.0){
 		  if(gamma > 0.0){
 			  if (beta + gamma < 1){
-				  
+				  //set position
 				  Vector3d p = origin.clone().add(direction.clone().mul(t));
 				  outRecord.location.set(p);
+				  //set normals
 				  if (!face.hasNormals()){
 					  outRecord.normal.set(this.norm);
 				  } else {
@@ -107,8 +108,30 @@ public class Triangle extends Surface {
 					  outRecord.normal.set(norm).normalize();
 				  }
 				 //ADD TEXTURES
-				 // outRecord.texCoords.set(0,1);
+				  //set textures
+				  if(face.hasUVs()){
+					  Vector2 uvA = owner.getMesh().getUV(face, 0).clone();
+					  Vector2 uvB = owner.getMesh().getUV(face, 1).clone();
+					  Vector2 uvC = owner.getMesh().getUV(face, 2).clone();
+					  
+					  double uvAX = (uvA.clone().x * alpha);
+					  double uvAY = (uvA.clone().y * alpha);
+					  double uvBX = (uvB.clone().x * beta);
+					  double uvBY = (uvB.clone().y * beta);
+					  double uvCX = (uvC.clone().x * gamma);
+					  double uvCY = (uvC.clone().y * gamma);
+					  
+					  Vector2d uvAlpha = new Vector2d(uvAX, uvAY);
+					  Vector2d uvBeta = new Vector2d(uvBX, uvBY);
+					  Vector2d uvGamma = new Vector2d(uvCX, uvCY);
+					  
+					  Vector2d uvFinal = uvAlpha.clone().add(uvBeta.clone()).add(uvGamma.clone());
+					  outRecord.texCoords.set(uvFinal);
+					  
+				  } 
+				  //set surface
 				  outRecord.surface = this;
+				  //set t
 	              outRecord.t = t;
 				  return true;
 			  } else {
