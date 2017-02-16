@@ -1,6 +1,9 @@
 package ray1.shader;
 
+import egl.math.Vector3;
+import egl.math.Vector3d;
 import ray1.IntersectionRecord;
+import ray1.Light;
 import ray1.Ray;
 import ray1.Scene;
 import egl.math.Color;
@@ -56,7 +59,31 @@ public class Phong extends Shader {
 		//    the intersection point from the light's position.
 		// 4) Compute the color of the point using the Phong shading model. Add this value
 		//    to the output.
-		
-	}
 
+		Vector3d I = new Vector3d();
+		for (int i=0; i<scene.getLights().size(); i++) {
+			Light light = new Light();
+			if (!isShadowed(scene,light,record,ray)) {
+				Vector3d dir = record.location.clone().sub(light.position);
+				Vector3d kl = new Vector3d(light.intensity.r(), light.intensity.g(), light.intensity.b());
+				Vector3d kd = new Vector3d(diffuseColor.r(), diffuseColor.g(), diffuseColor.b());
+				Vector3d ks = new Vector3d(specularColor.r(), specularColor.g(), specularColor.b());
+				Vector3d h = dir.clone().add(ray.direction).normalize();
+				double nh = record.normal.clone().dot(h);
+				double nw = record.normal.clone().dot(dir);
+				double r = (new Vector3d()).addMultiple(1,light.position).dist(record.location);
+				double maxnh = Math.max(nh,0);
+				double maxnw = Math.max(nw,0);
+				Vector3d kdmax = kd.clone().mul(maxnw);
+				Vector3d ksmaxpow = ks.clone().mul(Math.pow(maxnh,exponent));
+				double r2 = Math.pow(r,2);
+				Vector3d klfall = kl.clone().div(r2);
+
+				I.add(klfall.clone().mul(kdmax.clone().add(ksmaxpow)));
+//				I.add(kl.clone().div(r2).mul(kd.clone().mul(maxnw).add(ks.clone().mul(Math.pow(maxnh,exponent)))));
+			}
+//			I.add(new Vector3d(diffuseColor.r(), diffuseColor.g(), diffuseColor.b()));
+		}
+		outIntensity.set(new Colorf((float)I.x,(float)I.y,(float)I.z));
+	}
 }

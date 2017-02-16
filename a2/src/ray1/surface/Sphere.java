@@ -47,6 +47,7 @@ public class Sphere extends Surface {
      */
     public boolean intersect(IntersectionRecord outRecord, Ray rayIn) {
         // TODO#A2: fill in this function.
+
         Vector3d d = rayIn.direction;
         Vector3d e = rayIn.origin;
         Vector3d c = (new Vector3d()).addMultiple(1, center);
@@ -58,11 +59,13 @@ public class Sphere extends Surface {
 
         double discr = Math.sqrt(Math.pow(dec, 2) - dd * (ec.clone().dot(ec) - Math.pow(radius, 2)));
 
+//        System.out.println(discr);
+
         if (discr > 0) {
             double t1 = (-dec + discr) / dd;
             double t2 = (-dec - discr) / dd;
 
-            if (t1 > 0 || t2 > 0) {
+            if ((t1 > rayIn.start && t1 < rayIn.end) || (t2 > rayIn.start && t2 < rayIn.end)) {
                 double t;
                 if (t1 < t2) {
                     t = t1;
@@ -83,6 +86,8 @@ public class Sphere extends Surface {
                 outRecord.texCoords.set(u,v);
                 outRecord.surface = this;
                 outRecord.t = t;
+
+                rayIn.end = t;
 
                 return true;
             }

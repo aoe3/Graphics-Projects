@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import ray1.camera.Camera;
 import egl.math.Colorf;
+import ray1.shader.Shader;
 
 public class RayTracer {
 	public static class ScenePath {
@@ -237,11 +238,20 @@ public class RayTracer {
 		// 2) Get the shader from the intersection record.
 		// 3) Call the shader's shade() method to set the color for this ray.
 
+		// STEP 1
 		IntersectionRecord record = new IntersectionRecord();
 		if (!scene.getFirstIntersection(record, ray)) {
 			outColor.set(scene.backColor);
+			return;
 		}
-		outColor.set(scene.backColor);
-		record.surface.getShader().shade(outColor, scene, ray, record);
+
+		// STEP 2
+		Shader shader = record.surface.getShader();
+
+		// STEP 3
+		Colorf outIntensity = new Colorf();
+		shader.shade(outIntensity, scene, ray, record);
+		outColor.set(outIntensity);
+//		record.surface.getShader().shade(outColor, scene, ray, record);
 	}
 }

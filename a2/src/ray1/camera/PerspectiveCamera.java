@@ -41,7 +41,7 @@ public class PerspectiveCamera extends Camera {
 
         w = getViewDir().negate().normalize();
         u = getViewUp().cross(w).normalize();
-        v = w.cross(u).normalize();
+        v = w.clone().cross(u).normalize();
 
     }
 
@@ -72,11 +72,12 @@ public class PerspectiveCamera extends Camera {
         Vector3 vV = v.clone().mul(inV);
 
         Vector3d uUvV = (new Vector3d()).addMultiple(1,uU.clone().add(vV));
-        Vector3d ndw = (new Vector3d()).addMultiple(1,getViewDir().mul(projDistance));
+        Vector3d ndw = (new Vector3d()).addMultiple(1,w.clone().negate().mul(projDistance));
 
         Vector3d origin = (new Vector3d()).addMultiple(1,getViewPoint());
         Vector3d direction = ndw.clone().add(uUvV);
 
         outRay.set(origin, direction);
+        outRay.makeOffsetRay();
     }
 }

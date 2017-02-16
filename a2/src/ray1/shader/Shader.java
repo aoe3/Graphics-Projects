@@ -64,7 +64,7 @@ public abstract class Shader {
 		
 		// Set the ray to end at the light
 		shadowRay.makeOffsetSegment(end);
-		
+
 		return scene.getAnyIntersection(shadowRay);
 	}
 	

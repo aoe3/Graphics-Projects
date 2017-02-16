@@ -23,7 +23,7 @@ public class OrthographicCamera extends Camera {
         // 2) Set up the helper variables if needed
         w = getViewDir().negate().normalize();
         u = getViewUp().cross(w).normalize();
-        v = w.cross(u).normalize();
+        v = w.clone().cross(u).normalize();
     }
 
     /**
@@ -55,8 +55,9 @@ public class OrthographicCamera extends Camera {
         Vector3 uUvV = uU.clone().add(vV);
         Vector3d e = (new Vector3d()).addMultiple(1,getViewPoint());
         Vector3d origin = e.clone().addMultiple(1,uUvV);       // S = E + uU + vV;
-        Vector3d direction = (new Vector3d()).addMultiple(1, getViewDir());
+        Vector3d direction = (new Vector3d()).addMultiple(1, w.clone().negate());
 
         outRay.set(origin, direction);
+        outRay.makeOffsetRay();
     }
 }

@@ -135,18 +135,22 @@ public class Scene {
 		//		    6) If there was an intersection, return true; otherwise return false.
 
 		for (int i=0; i<surfaces.size(); i++) {
-			if (surfaces.get(i).intersect(outRecord, rayIn)) {
-				// STEP 3 HERE
-				// ...
+			IntersectionRecord record = new IntersectionRecord();
+			Ray ray = new Ray(rayIn);
+			Surface surface = surfaces.get(i);
+			if (surface.intersect(record, ray)) {
+				// STEP 3
+				if (record.t <= ray.end) {
+					// STEP 4
+					if (anyIntersection) {
+						return true;
+					}
 
-				if (anyIntersection) {
+					// STEP 5
+					outRecord.set(record);
+
 					return true;
 				}
-
-				// STEP 5 HERE
-				// ...
-
-				return true;
 			}
 		}
 		return false;

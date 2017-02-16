@@ -3,6 +3,7 @@ package ray1.shader;
 import egl.math.Vector3;
 import egl.math.Vector3d;
 import ray1.IntersectionRecord;
+import ray1.Light;
 import ray1.Ray;
 import ray1.Scene;
 import egl.math.Color;
@@ -50,11 +51,15 @@ public class Lambertian extends Shader {
 		// 4) Compute the color of the point using the Lambert shading model. Add this value
 		//    to the output.
 		for (int i=0; i<scene.getLights().size(); i++) {
-			if (isShadowed(scene,scene.getLights().get(i),record,ray)) {
-				return;
+			Light light = new Light();
+			if (!isShadowed(scene,light,record,ray)) {
+				Vector3d dir = record.location.clone().sub(light.position);
+				Colorf kl = light.intensity;
+				Colorf kd = diffuseColor;
+//				Vector3d nw = record.normal.clone().dot(dir);
+//				double r = (light.position.clone().sub(record.location)).dist();
+//				outIntensity.set(kl/Math.pow(r,2)*kd*Math.max(nw,0));
 			}
-			Vector3d dir = record.location.clone().sub(scene.getLights().get(i));
 		}
 	}
-
 }
