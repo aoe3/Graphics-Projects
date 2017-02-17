@@ -1,8 +1,11 @@
 package ray1.shader;
 
+import egl.math.Color;
 import ray1.shader.Texture;
 import egl.math.Colorf;
 import egl.math.Vector2;
+
+import java.awt.image.BufferedImage;
 
 /**
  * A Texture class that repeats the texture image as necessary for UV-coordinates
@@ -29,9 +32,9 @@ public class RepeatTexture extends Texture {
 		// NOTE: By convention, UV coordinates specify the lower-left corner of the image as the
 		//    origin, but the ImageBuffer class specifies the upper-left corner as the origin.
 		double inX = texCoord.x;
-		System.out.println(inX);
+//		System.out.println(inX);
 		double inY = texCoord.y;
-		System.out.println(inY);
+//		System.out.println(inY);
 		
 		int nX = image.getWidth();
 		int nY = image.getHeight();
@@ -53,8 +56,15 @@ public class RepeatTexture extends Texture {
 		} else {
 			outnY = intInY;
 		}
-		
-		return new Colorf(0,0,0);
-	}
+		System.out.println("nX is "+nX);
+		System.out.println("outnX is "+outnX);
+		System.out.println("nY is "+nY);
+		System.out.println("outnY is "+outnY);
+		System.out.println("");
 
+		int intColor = image.getRGB(outnX, image.getHeight()-outnY);
+		Color c = Color.fromIntRGB(intColor);
+//		System.out.println(new Colorf(c));
+		return new Colorf(c);
+	}
 }

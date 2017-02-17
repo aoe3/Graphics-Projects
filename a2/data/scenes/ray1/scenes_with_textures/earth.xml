@@ -18,10 +18,8 @@
     <image>../../textures/Earth.png</image>
   </texture>
 
-  <shader name="earth" type="Phong">
+  <shader name="earth" type="Lambertian">
     <texture ref = "earthTex" />
-    <specularColor>0.9 0.7 0.3</specularColor>
-    <exponent>10</exponent>
   </shader>
 
   <surface type="Mesh">

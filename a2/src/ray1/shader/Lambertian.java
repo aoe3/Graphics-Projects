@@ -1,13 +1,10 @@
 package ray1.shader;
 
-import egl.math.Vector3;
-import egl.math.Vector3d;
+import egl.math.*;
 import ray1.IntersectionRecord;
 import ray1.Light;
 import ray1.Ray;
 import ray1.Scene;
-import egl.math.Color;
-import egl.math.Colorf;
 
 /**
  * A Lambertian material scatters light equally in all directions. BRDF value is
@@ -59,6 +56,10 @@ public class Lambertian extends Shader {
 //				Vector3d nw = record.normal.clone().dot(dir);
 //				double r = (light.position.clone().sub(record.location)).dist();
 //				outIntensity.set(kl/Math.pow(r,2)*kd*Math.max(nw,0));
+
+				if (texture != null) {
+					setDiffuseColor(texture.getTexColor(new Vector2(record.texCoords)));
+				}
 
 				Vector3d dir = (record.location.clone().sub(light.position)).normalize();
 				double nDotL = -(record.normal.clone()).dot(dir.clone());

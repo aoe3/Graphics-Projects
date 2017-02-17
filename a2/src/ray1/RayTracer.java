@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
+import egl.math.Vector2;
 import ray1.camera.Camera;
 import egl.math.Colorf;
 import ray1.shader.Shader;
