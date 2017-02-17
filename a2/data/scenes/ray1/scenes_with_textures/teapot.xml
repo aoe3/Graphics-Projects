@@ -27,11 +27,9 @@
     <texture ref="tableclothTex" />
     <diffuseColor>0 1 0</diffuseColor>
   </shader>
-  <shader name="teapot" type="Phong">
+  <shader name="teapot" type="Lambertian">
     <texture ref="teapotTex" />
     <diffuseColor>1 0 0</diffuseColor>
-    <specularColor>0.9 0.9 1</specularColor>
-    <exponent>10</exponent>
   </shader>
 
   <surface type="Mesh">

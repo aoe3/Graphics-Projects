@@ -31,8 +31,8 @@ public class ClampTexture extends Texture {
 		double inX = texCoord.x;
 		double inY = texCoord.y;
 
-		int nX = image.getWidth();
-		int nY = image.getHeight();
+		int nX = image.getWidth()-1;
+		int nY = image.getHeight()-1;
 
 		int intInX = (int)((inX * nX) - 0.5);
 		int intInY = (int)((inY * nY) - 0.5);
@@ -56,7 +56,7 @@ public class ClampTexture extends Texture {
 			outnY = intInY;
 		}
 
-		int intColor = image.getRGB(outnX, image.getHeight()-outnY);
+		int intColor = image.getRGB(outnX, nY-outnY);
 		Color c = Color.fromIntRGB(intColor);
 		return new Colorf(c);
 	}

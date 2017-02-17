@@ -28,7 +28,7 @@ public class PerspectiveCamera extends Camera {
     //          formed by three basis vectors and any other helper variables 
     //          if needed.
 
-    Vector3 u,v,w;
+    Vector3d u,v,w;
 
     /**
      * Initialize the derived view variables to prepare for using the camera.
@@ -39,8 +39,8 @@ public class PerspectiveCamera extends Camera {
         // based on viewDir and viewUp
         // 2) Set up the helper variables if needed
 
-        w = getViewDir().negate().normalize();
-        u = getViewUp().cross(w).normalize();
+        w = (new Vector3d(getViewDir())).negate().normalize();
+        u = (new Vector3d(getViewUp())).cross(w).normalize();
         v = w.clone().cross(u).normalize();
     }
 
@@ -67,14 +67,14 @@ public class PerspectiveCamera extends Camera {
         inV *= getViewWidth();
         inV -= getViewWidth()/2;
 
-        Vector3 uU = u.clone().mul(inU);
-        Vector3 vV = v.clone().mul(inV);
+        Vector3d uU = u.clone().mul(inU);
+        Vector3d vV = v.clone().mul(inV);
 
-        Vector3d uUvV = (new Vector3d()).addMultiple(1,uU.clone().add(vV));
-        Vector3d ndw = (new Vector3d()).addMultiple(1,w.clone().negate().mul(projDistance));
+        Vector3d uUvV = uU.clone().add(vV);
+        Vector3d ndw = w.clone().negate().mul(projDistance);
 
-        Vector3d origin = (new Vector3d()).addMultiple(1,getViewPoint());
-        Vector3d direction = ndw.clone().add(uUvV);
+        Vector3d origin = (new Vector3d(getViewPoint()));
+        Vector3d direction = ndw.clone().add(uUvV).normalize();
 
         outRay.set(origin, direction);
         outRay.makeOffsetRay();

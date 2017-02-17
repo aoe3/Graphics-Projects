@@ -11,7 +11,7 @@ public class OrthographicCamera extends Camera {
     //          formed by three basis vectors and any other helper variables 
     //          if needed.
 
-    Vector3 u,v,w;
+    Vector3d u,v,w;
 
     /**
      * Initialize the derived view variables to prepare for using the camera.
@@ -21,8 +21,8 @@ public class OrthographicCamera extends Camera {
         // 1) Set the 3 basis vectors in the orthonormal basis, 
         //    based on viewDir and viewUp
         // 2) Set up the helper variables if needed
-        w = getViewDir().negate().normalize();
-        u = getViewUp().cross(w).normalize();
+        w = (new Vector3d(getViewDir())).negate().normalize();
+        u = (new Vector3d(getViewUp())).cross(w).normalize();
         v = w.clone().cross(u).normalize();
     }
 
@@ -49,13 +49,12 @@ public class OrthographicCamera extends Camera {
         inV *= getViewHeight();
         inV -= getViewHeight()/2;
 
-
-        Vector3 uU = u.clone().mul(inU);
-        Vector3 vV = v.clone().mul(inV);
-        Vector3 uUvV = uU.clone().add(vV);
-        Vector3d e = (new Vector3d()).addMultiple(1,getViewPoint());
-        Vector3d origin = e.clone().addMultiple(1,uUvV);       // S = E + uU + vV;
-        Vector3d direction = (new Vector3d()).addMultiple(1, w.clone().negate());
+        Vector3d uU = u.clone().mul(inU);
+        Vector3d vV = v.clone().mul(inV);
+        Vector3d uUvV = uU.clone().add(vV);
+        Vector3d e = new Vector3d(getViewPoint());
+        Vector3d origin = e.clone().add(uUvV);
+        Vector3d direction = w.clone().normalize().negate();
 
         outRay.set(origin, direction);
         outRay.makeOffsetRay();

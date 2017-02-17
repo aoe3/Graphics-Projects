@@ -50,19 +50,12 @@ public class Lambertian extends Shader {
 		for (int i=0; i<scene.getLights().size(); i++) {
 			Light light = scene.getLights().get(i);
 			if (!isShadowed(scene,light,record,ray)) {
-//				Vector3d dir = record.location.clone().sub(light.position);
-//				Colorf kl = light.intensity;
-//				Colorf kd = diffuseColor;
-//				Vector3d nw = record.normal.clone().dot(dir);
-//				double r = (light.position.clone().sub(record.location)).dist();
-//				outIntensity.set(kl/Math.pow(r,2)*kd*Math.max(nw,0));
-
 				if (texture != null) {
 					setDiffuseColor(texture.getTexColor(new Vector2(record.texCoords)));
 				}
 
-				Vector3d dir = (record.location.clone().sub(light.position)).normalize();
-				double nDotL = -(record.normal.clone()).dot(dir.clone());
+				Vector3d dir = (record.location.clone().sub(light.position)).normalize().negate();
+				double nDotL = (record.normal.clone()).dot(dir.clone());
 				double color = (Math.max(nDotL, 0.0));
 				double r = (new Vector3d()).addMultiple(1,light.position).dist(record.location);
 				float red = (float) (diffuseColor.clone().x * light.intensity.clone().x * color / Math.pow(r,2));
@@ -70,7 +63,6 @@ public class Lambertian extends Shader {
 				float blu = (float) (diffuseColor.clone().z * light.intensity.clone().z * color / Math.pow(r,2));
 				outIntensity.set((outIntensity.clone().x + red), (outIntensity.clone().y + grn), (outIntensity.clone().z + blu));
 			}
-
 		}
 	}
 }

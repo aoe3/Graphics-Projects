@@ -32,12 +32,10 @@ public class RepeatTexture extends Texture {
 		// NOTE: By convention, UV coordinates specify the lower-left corner of the image as the
 		//    origin, but the ImageBuffer class specifies the upper-left corner as the origin.
 		double inX = texCoord.x;
-		System.out.println("inX is " + inX);
 		double inY = texCoord.y;
-		System.out.println("inY is " + inY);
 		
-		int nX = image.getWidth();
-		int nY = image.getHeight();
+		int nX = image.getWidth()-1;
+		int nY = image.getHeight()-1;
 		
 		int intInX = (int)((inX * nX) - 0.5);
 		int intInY = (int)((inY * nY) - 0.5);
@@ -52,8 +50,6 @@ public class RepeatTexture extends Texture {
 		} else {
 			outnX = intInX;
 		}
-		System.out.println("intInX is "+intInX);
-		System.out.println("intInY is "+intInY);
 		
 		if(intInY > nY){
 			outnY = (intInY % nY);
@@ -62,15 +58,9 @@ public class RepeatTexture extends Texture {
 		} else {
 			outnY = intInY;
 		}
-		System.out.println("nX is "+nX);
-		System.out.println("outnX is "+outnX);
-		System.out.println("nY is "+nY);
-		System.out.println("outnY is "+outnY);
-		System.out.println("");
 
-		int intColor = image.getRGB(outnX, image.getHeight()-outnY);
+		int intColor = image.getRGB(outnX, nY-outnY);
 		Color c = Color.fromIntRGB(intColor);
-//		System.out.println(new Colorf(c));
 		return new Colorf(c);
 	}
 }

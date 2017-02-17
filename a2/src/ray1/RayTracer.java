@@ -253,6 +253,5 @@ public class RayTracer {
 		Colorf outIntensity = new Colorf();
 		shader.shade(outIntensity, scene, ray, record);
 		outColor.set(outIntensity);
-//		record.surface.getShader().shade(outColor, scene, ray, record);
 	}
 }

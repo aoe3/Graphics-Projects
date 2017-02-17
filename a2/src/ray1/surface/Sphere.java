@@ -51,15 +51,12 @@ public class Sphere extends Surface {
         Vector3d d = rayIn.direction;
         Vector3d e = rayIn.origin;
         Vector3d c = (new Vector3d()).addMultiple(1, center);
-//      Vector3d e = p.sub(c);
 
         Vector3d ec = e.clone().sub(c);
         double dec = d.clone().dot(ec);
         double dd = d.clone().dot(d);
 
         double discr = Math.sqrt(Math.pow(dec, 2) - dd * (ec.clone().dot(ec) - Math.pow(radius, 2)));
-
-//        System.out.println(discr);
 
         if (discr > 0) {
             double t1 = (-dec + discr) / dd;
@@ -106,31 +103,6 @@ public class Sphere extends Surface {
             return false;
         }
         return false;
-
-//        float dp = d.clone().dot(p);
-//        float dd = d.clone().dot(d);
-//        float pp = p.clone().dot(p);
-//        float t1 = (-dp + Math.sqrt(Math.pow(dp, 2) - dd * (pp - 1))) / 2;
-//        float t2 = (-dp - Math.sqrt(Math.pow(dp, 2) - dd * (pp - 1))) / 2;
-//
-//        if (t1 > 0 || t2 > 0) {
-//            float t;
-//            if (t1 < t2) {
-//                t = t1;
-//            } else {
-//                t = t2;
-//            }
-//
-//            Vector3d pPlane = p.add(d.mul(t));
-//            if (pPlane)
-//                outRecord.location = p.add(d.mul(t));
-//            outRecord.normal = (new Vector3d(outRecord.location.x, outRecord.location.y, outRecord.location.z)).normalize();
-//            outRecord.texCoords =
-//
-//            return true;
-//        } else {
-//            return false;
-//        }
     }
 
     /**
