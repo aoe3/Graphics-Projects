@@ -59,27 +59,53 @@ public class Phong extends Shader {
 		//    the intersection point from the light's position.
 		// 4) Compute the color of the point using the Phong shading model. Add this value
 		//    to the output.
-
-		Vector3d I = new Vector3d();
+Vector3d I = new Vector3d();
 		for (int i=0; i<scene.getLights().size(); i++) {
 			Light light = new Light();
 			if (!isShadowed(scene,light,record,ray)) {
-				Vector3d dir = record.location.clone().sub(light.position);
-				Vector3d kl = new Vector3d(light.intensity.r(), light.intensity.g(), light.intensity.b());
-				Vector3d kd = new Vector3d(diffuseColor.r(), diffuseColor.g(), diffuseColor.b());
-				Vector3d ks = new Vector3d(specularColor.r(), specularColor.g(), specularColor.b());
-				Vector3d h = dir.clone().add(ray.direction).normalize();
-				double nh = record.normal.clone().dot(h);
-				double nw = record.normal.clone().dot(dir);
+				Vector3d dir = (record.location.clone().sub(light.position)).normalize();
+				double nDotL = (record.normal.clone()).dot(dir.clone());
+				//double color = (Math.max(nDotL, 0.0));
 				double r = (new Vector3d()).addMultiple(1,light.position).dist(record.location);
-				double maxnh = Math.max(nh,0);
-				double maxnw = Math.max(nw,0);
-				Vector3d kdmax = kd.clone().mul(maxnw);
-				Vector3d ksmaxpow = ks.clone().mul(Math.pow(maxnh,exponent));
-				double r2 = Math.pow(r,2);
-				Vector3d klfall = kl.clone().div(r2);
-
-				I.add(klfall.clone().mul(kdmax.clone().add(ksmaxpow)));
+				Vector3d kl = new Vector3d();
+				kl.set(light.intensity.clone());
+				double klRed = kl.x/(Math.pow(r, 2));
+				double klGrn = kl.y/(Math.pow(r, 2));
+				double klBlu = kl.z/(Math.pow(r, 2));
+				Vector3d kd = new Vector3d();
+				kd.set(diffuseColor.clone());
+				Vector3d ks = new Vector3d();
+				Vector3d v = (record.location.clone().sub(scene.getCamera().getViewPoint())).normalize();
+				Vector3d h = ((v.clone().add(dir))).div((v.clone().add(dir)).normalize());
+				double nh = record.normal.clone().dot(h);
+				
+				if (nDotL > 0){
+					float red = (float) (klRed *(kd.x * nDotL + (ks.x + Math.pow(Math.max(nh,0), exponent))));
+					float grn = (float) (klGrn *(kd.y * nDotL + (ks.y + Math.pow(Math.max(nh,0), exponent))));
+					float blu = (float) (klBlu *(kd.z * nDotL + (ks.z + Math.pow(Math.max(nh,0), exponent))));
+					I.set(red,grn,blu);
+				} else {
+					I.set(0.0f,0.0f,0.0f);
+				}
+				
+				System.out.println(I.x + ", " + I.y + ", " + I.z);
+				
+//				Vector3d dir = record.location.clone().sub(light.position);
+//				Vector3d kl = new Vector3d(light.intensity.r(), light.intensity.g(), light.intensity.b());
+//				Vector3d kd = new Vector3d(diffuseColor.r(), diffuseColor.g(), diffuseColor.b());
+//				Vector3d ks = new Vector3d(specularColor.r(), specularColor.g(), specularColor.b());
+//				Vector3d h = dir.clone().add(ray.direction).normalize();
+//				double nh = record.normal.clone().dot(h);
+//				double nw = record.normal.clone().dot(dir);
+//				double r = (new Vector3d()).addMultiple(1,light.position).dist(record.location);
+//				double maxnh = Math.max(nh,0);
+//				double maxnw = Math.max(nw,0);
+//				Vector3d kdmax = kd.clone().mul(maxnw);
+//				Vector3d ksmaxpow = ks.clone().mul(Math.pow(maxnh,exponent));
+//				double r2 = Math.pow(r,2);
+//				Vector3d klfall = kl.clone().div(r2);
+//
+//				I.add(klfall.clone().mul(kdmax.clone().add(ksmaxpow)));
 //				I.add(kl.clone().div(r2).mul(kd.clone().mul(maxnw).add(ks.clone().mul(Math.pow(maxnh,exponent)))));
 			}
 //			I.add(new Vector3d(diffuseColor.r(), diffuseColor.g(), diffuseColor.b()));
