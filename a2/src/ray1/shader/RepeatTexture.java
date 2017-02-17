@@ -32,9 +32,9 @@ public class RepeatTexture extends Texture {
 		// NOTE: By convention, UV coordinates specify the lower-left corner of the image as the
 		//    origin, but the ImageBuffer class specifies the upper-left corner as the origin.
 		double inX = texCoord.x;
-//		System.out.println(inX);
+		System.out.println("inX is " + inX);
 		double inY = texCoord.y;
-//		System.out.println(inY);
+		System.out.println("inY is " + inY);
 		
 		int nX = image.getWidth();
 		int nY = image.getHeight();
@@ -47,12 +47,18 @@ public class RepeatTexture extends Texture {
 		
 		if(intInX > nX){
 			outnX = (intInX % nX);
+		} else if (intInX < 0) {
+			outnX = nX - (-intInX % nX);
 		} else {
 			outnX = intInX;
 		}
+		System.out.println("intInX is "+intInX);
+		System.out.println("intInY is "+intInY);
 		
 		if(intInY > nY){
 			outnY = (intInY % nY);
+		} else if (intInY < 0) {
+			outnY = nY - (-intInY % nY);
 		} else {
 			outnY = intInY;
 		}

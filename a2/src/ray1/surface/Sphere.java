@@ -88,6 +88,10 @@ public class Sphere extends Surface {
                 double theta = Math.acos((p.z-c.z) / radius);
                 double phi = Math.atan2(p.y-c.y, p.x-c.x);
 
+                if (phi < 0) {
+                    phi += M_2PI;
+                }
+
                 double u = phi / M_2PI;
                 double v = (Math.PI-theta) / Math.PI;
 
