@@ -104,11 +104,11 @@ public class Triangle extends Surface {
         double l = v0.z - eZ;
         double M = a * (e * i - h * f) + b * (g * f - d * i) + c * (d * h - e * g);
 
-        double t = (f * (a * k - j * b) + e * (j * c - a * l) + d * (b * l - k * c)) / M;
+        double t = -(f * (a * k - j * b) + e * (j * c - a * l) + d * (b * l - k * c)) / M;
 //        System.out.println(t);
-//        if (t < rayIn.start || t > rayIn.end) {
-//            return false;
-//        }
+        if (t < rayIn.start || t > rayIn.end) {
+            return false;
+        }
 
         double gamma = (i * (a * k - j * b) + h * (j * c - a * l) + g * (b * l - k * c)) / M;
         if (gamma < 0 || gamma > 1) {
@@ -164,6 +164,7 @@ public class Triangle extends Surface {
                     outRecord.surface = this;
                     //set t
                     outRecord.t = t;
+                    rayIn.end = t;
                     return true;
                 } else {
                     return false;

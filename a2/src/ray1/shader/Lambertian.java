@@ -51,7 +51,7 @@ public class Lambertian extends Shader {
 		// 4) Compute the color of the point using the Lambert shading model. Add this value
 		//    to the output.
 		for (int i=0; i<scene.getLights().size(); i++) {
-			Light light = new Light();
+			Light light = scene.getLights().get(i);
 			if (!isShadowed(scene,light,record,ray)) {
 //				Vector3d dir = record.location.clone().sub(light.position);
 //				Colorf kl = light.intensity;
@@ -60,14 +60,16 @@ public class Lambertian extends Shader {
 //				double r = (light.position.clone().sub(record.location)).dist();
 //				outIntensity.set(kl/Math.pow(r,2)*kd*Math.max(nw,0));
 
-				Vector3d dir = (record.location.clone().sub(scene.getLights().get(i).position)).normalize();
-				double nDotL = (record.normal.clone()).dot(dir.clone());
-				double color =(Math.max(nDotL, 0.0));
-				float red = (float) (diffuseColor.clone().x * scene.getLights().get(i).intensity.clone().x * color);
-				float grn = (float) (diffuseColor.clone().y * scene.getLights().get(i).intensity.clone().y * color);
-				float blu = (float) (diffuseColor.clone().z * scene.getLights().get(i).intensity.clone().z * color);
+				Vector3d dir = (record.location.clone().sub(light.position)).normalize();
+				double nDotL = -(record.normal.clone()).dot(dir.clone());
+				double color = (Math.max(nDotL, 0.0));
+				double r = (new Vector3d()).addMultiple(1,light.position).dist(record.location);
+				float red = (float) (diffuseColor.clone().x * light.intensity.clone().x * color / Math.pow(r,2));
+				float grn = (float) (diffuseColor.clone().y * light.intensity.clone().y * color / Math.pow(r,2));
+				float blu = (float) (diffuseColor.clone().z * light.intensity.clone().z * color / Math.pow(r,2));
 				outIntensity.set((outIntensity.clone().x + red), (outIntensity.clone().y + grn), (outIntensity.clone().z + blu));
 			}
+
 		}
 	}
 }

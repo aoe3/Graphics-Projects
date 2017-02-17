@@ -42,7 +42,6 @@ public class PerspectiveCamera extends Camera {
         w = getViewDir().negate().normalize();
         u = getViewUp().cross(w).normalize();
         v = w.clone().cross(u).normalize();
-
     }
 
     /**

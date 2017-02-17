@@ -136,14 +136,17 @@ public class Scene {
 		//		    6) If there was an intersection, return true; otherwise return false.
 
 		IntersectionRecord closest = null;
+		double tmin = Double.MAX_VALUE;
 		for (int i=0; i<surfaces.size(); i++) {
 			IntersectionRecord record = new IntersectionRecord();
 			Ray ray = new Ray(rayIn);
 			Surface surface = surfaces.get(i);
 			if (surface.intersect(record, ray)) {
 				// STEP 3
-				if (record.t <= ray.end) {
+				if (record.t < tmin) {
 					closest = record;
+					tmin = record.t;
+
 					// STEP 4
 					if (anyIntersection) {
 						return true;

@@ -68,9 +68,17 @@ public class Sphere extends Surface {
             if ((t1 > rayIn.start && t1 < rayIn.end) || (t2 > rayIn.start && t2 < rayIn.end)) {
                 double t;
                 if (t1 < t2) {
-                    t = t1;
+                    if (t1 > rayIn.start) {
+                        t = t1;
+                    } else {
+                        t = t2;
+                    }
                 } else {
-                    t = t2;
+                    if (t2 > rayIn.start) {
+                        t = t2;
+                    } else {
+                        t = t1;
+                    }
                 }
 
                 Vector3d p = e.clone().add(d.clone().mul(t));
