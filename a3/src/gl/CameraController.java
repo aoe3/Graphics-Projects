@@ -94,6 +94,60 @@ public class CameraController {
 	 */
 	protected void rotate(Matrix4 parentWorld, Matrix4 transformation, Vector3 rotation) {
 		// TODO#A3#Part 3
+		// Use mulBefore!!!
+		float horizontal = rotation.clone().x;
+		float vertical = rotation.clone().y;
+		float zaxis = rotation.clone().z;
+		
+		Matrix4 hM = Matrix4.createRotationX(horizontal);
+		Matrix4 vM = Matrix4.createRotationY(vertical);
+		Matrix4 zM = Matrix4.createRotationZ(zaxis);
+		
+		boolean orbit = this.orbitMode;
+		
+		Matrix4 axes;
+
+//		System.out.println("PRE");
+//		System.out.println(transformation);
+//		System.out.println("");
+		if(orbit){
+			Matrix4 localTransform = this.camera.sceneObject.transformation.clone().invert();
+			axes = localTransform.mulAfter(parentWorld.clone());
+			
+//			System.out.println("ORBIT");
+//			System.out.println("");
+//			
+//			System.out.println("ORBIT AXES");
+//			System.out.println(axes);
+//			System.out.println("");
+			
+			axes.mulAfter(transformation.mulBefore(hM));
+			axes.mulAfter(transformation.mulBefore(vM));
+			axes.mulAfter(transformation.mulBefore(zM));
+
+//			System.out.println("ORBIT TRANSFORM");
+//			System.out.println(transformation);
+//			System.out.println("");
+		} else {
+			axes = this.camera.sceneCamera.transformation.clone().invert();
+			
+//			System.out.println("FLY");
+//			System.out.println("");
+//			
+//			System.out.println("FLY AXES");
+//			System.out.println(axes);
+//			System.out.println("");
+			
+			axes.mulAfter(transformation.mulBefore(hM));
+			axes.mulAfter(transformation.mulBefore(vM));
+			axes.mulAfter(transformation.mulBefore(zM));
+			
+//			System.out.println("FLY TRANSFORM");
+//			System.out.println(transformation);
+//			System.out.println("");
+		}
+		
+		
 	}
 	
 	/**
@@ -106,5 +160,11 @@ public class CameraController {
 	 */
 	protected void translate(Matrix4 parentWorld, Matrix4 transformation, Vector3 motion) {
 		// TODO#A3#Part 3
+		Matrix4 localTransform = this.camera.sceneObject.transformation.clone();
+		Matrix4 axes = localTransform.invert().mulAfter(parentWorld.clone().invert());
+		
+		Matrix4 camTranslate = Matrix4.createTranslation(motion);
+		
+		axes.mulBefore(transformation.mulBefore(camTranslate));
 	}
 }
