@@ -96,9 +96,9 @@ public class CameraController {
 		
 		// TODO#A3#Part 3
 		// Use mulBefore!!!
-		float horizontal = (rotation.clone().x) * ((float)(Math.PI * 180));
-		float vertical = (rotation.clone().y) * ((float)(Math.PI * 180));
-		float zaxis = (rotation.clone().z) * ((float)(Math.PI * 180));
+		float horizontal = (rotation.clone().x) * ((float)(Math.PI / 180.0f));
+		float vertical = (rotation.clone().y) * ((float)(Math.PI / 180.0f));
+		float zaxis = (rotation.clone().z) * ((float)(Math.PI / 180.0f));
 		
 		Matrix4 hM = Matrix4.createRotationX(horizontal);
 		Matrix4 vM = Matrix4.createRotationY(vertical);
