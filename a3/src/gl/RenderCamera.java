@@ -4,6 +4,7 @@ import common.SceneCamera;
 import common.SceneObject;
 import egl.math.Matrix4;
 import egl.math.Vector2;
+import egl.math.Vector2d;
 
 public class RenderCamera extends RenderObject {
 	/**
@@ -51,11 +52,68 @@ public class RenderCamera extends RenderObject {
 	 */
 	public void updateCameraMatrix(Vector2 viewportSize) {
 		this.viewportSize.set(viewportSize);
-		
 		// The camera's transformation matrix is found in this.mWorldTransform (inherited from RenderObject).
 		// The other camera parameters are found in the scene camera (this.sceneCamera).
 		// Look through the methods in Matrix4 before you type in any matrices from the book or the OpenGL specification.
 		
 		// TODO#A3#Part 2
+		Vector2d viewSize = this.sceneCamera.imageSize;
+		double w;
+		double h;
+		
+		double ratioVS = viewSize.x / viewSize.y;
+		double ratioVPS = viewportSize.x / viewportSize.y;
+		
+		if(ratioVS != ratioVPS){
+			if (viewportSize.x > viewportSize.y){
+				w = (viewportSize.x/viewportSize.y) * viewSize.x;
+				h = viewSize.y;
+			} else {
+				w = viewSize.x;
+				h = (viewportSize.y/viewportSize.x) * viewSize.y;
+			} 
+		} else {
+			w = viewSize.x;
+			h = viewSize.y;
+		}
+
+		System.out.println(viewportSize.x);
+		System.out.println(viewportSize.y);
+		System.out.println("");
+		System.out.println(w);
+		System.out.println(h);
+		System.out.println("");
+		System.out.println(viewSize.x);
+		System.out.println(viewSize.y);
+		System.out.println("");
+		
+		boolean perspective = this.sceneCamera.isPerspective;
+		double nearPoint = this.sceneCamera.zPlanes.x;
+		double farPoint = this.sceneCamera.zPlanes.y;
+		Matrix4 camTransform = this.mWorldTransform.invert().clone();
+		
+		if (perspective){
+			Matrix4 mPer;
+			
+			mPer = Matrix4.createPerspective((float)w, (float)h, (float)nearPoint, (float)farPoint);
+			
+			Matrix4 viewProj = mPer.clone().mulBefore(camTransform.clone());
+			System.out.println(viewProj);
+			System.out.println("");
+			
+			this.mViewProjection.set(viewProj.clone());
+			
+		} else {
+			Matrix4 mOrth;
+			
+			mOrth = Matrix4.createOrthographic((float)w, (float)h, (float)nearPoint, (float)farPoint);
+			
+			Matrix4 viewProj = mOrth.clone().mulBefore(camTransform.clone());
+			System.out.println(viewProj);
+			System.out.println("");
+			
+			this.mViewProjection.set(viewProj.clone());
+		}
+		
 	}	
 }
