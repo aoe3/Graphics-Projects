@@ -1,6 +1,7 @@
 package gl;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import common.Cubemap;
 import common.Material;
@@ -125,27 +126,42 @@ public class RenderTreeBuilder {
 		Matrix4 rootTransform = root.sceneObject.transformation.clone();
 		root.mWorldTransform.set(rootTransform.clone());
 		root.mWorldTransformIT.set(rootTransform.clone().invert().transpose().getAxes());
-		ArrayList<RenderObject> listOfNodes = inOrderTraversal(root);
+		List<RenderObject> listOfNodes = returnAllNodes(root);
 		for(int i = 0; i< listOfNodes.size(); i++){
 			RenderObject currentNode = listOfNodes.get(i);
 			currentNode.mWorldTransform.set(findParents(root, currentNode));
 			currentNode.mWorldTransformIT.set(findParentsIT(root, listOfNodes.get(i)).getAxes());
 		}
+		int i = 0;
+		for (RenderCamera cam : env.cameras){
+			i = i+1;
+			System.out.println(i);
+			cam.updateCameraMatrix(cam.viewportSize);
+		}
 	}
 	
-	private static ArrayList<RenderObject> inOrderTraversal(RenderObject theRoot) {
-		ArrayList<RenderObject> result = new ArrayList<RenderObject>();
-		result.add(theRoot);
-		for (RenderObject r : theRoot.children) {
-			result.addAll(inOrderTraversal(r));
-		}
-		return result;
+	public static List<RenderObject> returnAllNodes(RenderObject theroot){
+	    List<RenderObject> listOfNodes = new ArrayList<RenderObject>();
+	    addAllNodes(theroot, listOfNodes);
+	    return listOfNodes;
+	}
+
+	private static void addAllNodes(RenderObject theroot, List<RenderObject> listOfNodes) {
+	    if (theroot != null) {
+	        listOfNodes.add(theroot);
+	        List<RenderObject> children = theroot.children;
+	        if (children != null) {
+	            for (RenderObject child: children) {
+	                addAllNodes(child, listOfNodes);
+	            }
+	        }
+	    }
 	}
 	
 	public static Matrix4 findParents(RenderObject treeRoot, RenderObject node){
 		Matrix4 mReturn = node.sceneObject.transformation.clone();
 		
-		if (node.parent == treeRoot){
+		if (node == treeRoot){
 			return mReturn;
 			
 		} else {
@@ -158,7 +174,7 @@ public class RenderTreeBuilder {
 	public static Matrix4 findParentsIT(RenderObject treeRoot, RenderObject node){
 		Matrix4 mReturnIT = node.sceneObject.transformation.clone().invert().transpose();
 		
-		if (node.parent == treeRoot){
+		if (node == treeRoot){
 			return mReturnIT;
 			
 		} else {
