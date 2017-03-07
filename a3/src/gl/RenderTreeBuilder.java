@@ -124,6 +124,7 @@ public class RenderTreeBuilder {
 		// TODO#A3#Part 1
 		RenderObject root = env.root;
 		Matrix4 rootTransform = root.sceneObject.transformation.clone();
+		
 		root.mWorldTransform.set(rootTransform.clone());
 		root.mWorldTransformIT.set(rootTransform.clone().invert().transpose().getAxes());
 		List<RenderObject> listOfNodes = returnAllNodes(root);
@@ -132,10 +133,8 @@ public class RenderTreeBuilder {
 			currentNode.mWorldTransform.set(findParents(root, currentNode));
 			currentNode.mWorldTransformIT.set(findParentsIT(root, listOfNodes.get(i)).getAxes());
 		}
-		int i = 0;
+		
 		for (RenderCamera cam : env.cameras){
-			i = i+1;
-			System.out.println(i);
 			cam.updateCameraMatrix(cam.viewportSize);
 		}
 	}
