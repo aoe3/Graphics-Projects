@@ -76,16 +76,6 @@ public class RenderCamera extends RenderObject {
 			w = viewSize.x;
 			h = viewSize.y;
 		}
-
-		System.out.println(viewportSize.x);
-		System.out.println(viewportSize.y);
-		System.out.println("");
-		System.out.println(w);
-		System.out.println(h);
-		System.out.println("");
-		System.out.println(viewSize.x);
-		System.out.println(viewSize.y);
-		System.out.println("");
 		
 		boolean perspective = this.sceneCamera.isPerspective;
 		double nearPoint = this.sceneCamera.zPlanes.x;
@@ -98,8 +88,6 @@ public class RenderCamera extends RenderObject {
 			mPer = Matrix4.createPerspective((float)w, (float)h, (float)nearPoint, (float)farPoint);
 			
 			Matrix4 viewProj = mPer.clone().mulBefore(camTransform.clone());
-			System.out.println(viewProj);
-			System.out.println("");
 			
 			this.mViewProjection.set(viewProj.clone());
 			
@@ -109,8 +97,6 @@ public class RenderCamera extends RenderObject {
 			mOrth = Matrix4.createOrthographic((float)w, (float)h, (float)nearPoint, (float)farPoint);
 			
 			Matrix4 viewProj = mOrth.clone().mulBefore(camTransform.clone());
-			System.out.println(viewProj);
-			System.out.println("");
 			
 			this.mViewProjection.set(viewProj.clone());
 		}
