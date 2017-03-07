@@ -93,6 +93,7 @@ public class CameraController {
 	 * @param rotation  The rotation in degrees, as Euler angles (rotation angles about x, y, z axes)
 	 */
 	protected void rotate(Matrix4 parentWorld, Matrix4 transformation, Vector3 rotation) {
+		
 		// TODO#A3#Part 3
 		// Use mulBefore!!!
 		float horizontal = rotation.clone().x;
@@ -105,45 +106,92 @@ public class CameraController {
 		
 		boolean orbit = this.orbitMode;
 		
-		Matrix4 axes;
+		Matrix4 orbitAxes;
+		Matrix4 flyAxes;
 
 //		System.out.println("PRE");
+//		System.out.println("This is " + (transformation == this.camera.sceneCamera.transformation));
 //		System.out.println(transformation);
 //		System.out.println("");
 		if(orbit){
-			Matrix4 localTransform = this.camera.sceneObject.transformation.clone().invert();
-			axes = localTransform.mulAfter(parentWorld.clone());
+			System.out.println(transformation);
+			transformation.mulAfter(this.camera.sceneCamera.transformation.clone().invert().mulAfter(parentWorld.clone().invert()));
+			System.out.println(transformation);
+			transformation.mulBefore(hM);
+			System.out.println(transformation);
+			transformation.mulBefore(vM);
+			System.out.println(transformation);
+			transformation.mulBefore(zM);
+			System.out.println(transformation);
+			transformation.mulAfter(this.camera.sceneCamera.transformation.clone());
+			System.out.println(transformation);
+			System.out.println("");
 			
+//			Matrix4 localT = this.camera.sceneCamera.transformation.clone().invert().mulAfter(parentWorld.invert());
+//			transformation.set(localT.mulBefore(hM.mulBefore(vM.mulBefore(zM.mulBefore(transformation)))));
+////			
+			
+//			Matrix4 localT = transformation.invert().mulAfter(parentWorld.invert());
+//			orbitAxes = localT;
+//			
 //			System.out.println("ORBIT");
 //			System.out.println("");
 //			
 //			System.out.println("ORBIT AXES");
-//			System.out.println(axes);
+//			System.out.println(orbitAxes);
 //			System.out.println("");
 			
-			axes.mulAfter(transformation.mulBefore(hM));
-			axes.mulAfter(transformation.mulBefore(vM));
-			axes.mulAfter(transformation.mulBefore(zM));
-
-//			System.out.println("ORBIT TRANSFORM");
+//			System.out.println("This is " + (transformation == orbitAxes));
+//			System.out.println("");
+			
+//			orbitAxes.mulBefore(hM);
+//
+//			System.out.println("ORBIT TRANSFORM 1");
 //			System.out.println(transformation);
-//			System.out.println("");
-		} else {
-			axes = this.camera.sceneCamera.transformation.clone().invert();
-			
-//			System.out.println("FLY");
 //			System.out.println("");
 //			
-//			System.out.println("FLY AXES");
-//			System.out.println(axes);
+//			orbitAxes.mulBefore(vM);
+//
+//			System.out.println("ORBIT TRANSFORM 2");
+//			System.out.println(transformation);
+//			System.out.println("");
+//			
+//			orbitAxes.mulBefore(zM);
+//
+//			System.out.println("ORBIT TRANSFORM 3");
+//			System.out.println(transformation);
+//			System.out.println("");
+//			
+//			orbitAxes.mulBefore(localT.invert());
+//
+//			System.out.println("ORBIT TRANSFORM fin");
+//			System.out.println(transformation);
 //			System.out.println("");
 			
-			axes.mulAfter(transformation.mulBefore(hM));
-			axes.mulAfter(transformation.mulBefore(vM));
-			axes.mulAfter(transformation.mulBefore(zM));
+//			System.out.println("This is " + (transformation == orbitAxes));
+//			System.out.println("");
+		} else {
+			flyAxes = transformation.clone();
 			
-//			System.out.println("FLY TRANSFORM");
-//			System.out.println(transformation);
+			System.out.println("FLY");
+			System.out.println("");
+			
+			System.out.println("FLY AXES");
+			System.out.println(flyAxes);
+			System.out.println("");
+			
+//			System.out.println("This is " + (transformation == flyAxes));
+//			System.out.println("");
+			
+			flyAxes.mulBefore(transformation.mulBefore(hM));
+			flyAxes.mulBefore(transformation.mulBefore(vM));
+			flyAxes.mulBefore(transformation.mulBefore(zM));
+			
+			System.out.println("FLY TRANSFORM");
+			System.out.println(transformation);
+			System.out.println("");
+			
+//			System.out.println("This is " + (transformation == flyAxes));
 //			System.out.println("");
 		}
 		
