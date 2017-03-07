@@ -95,10 +95,9 @@ public class CameraController {
 	protected void rotate(Matrix4 parentWorld, Matrix4 transformation, Vector3 rotation) {
 		
 		// TODO#A3#Part 3
-		// Use mulBefore!!!
-		float horizontal = (rotation.clone().x) * ((float)(Math.PI / 180.0f));
-		float vertical = (rotation.clone().y) * ((float)(Math.PI / 180.0f));
-		float zaxis = (rotation.clone().z) * ((float)(Math.PI / 180.0f));
+		float horizontal = (rotation.clone().x * (float)Math.PI) / 180.0f;
+		float vertical = (rotation.clone().y * (float)Math.PI) / 180.0f;
+		float zaxis = (rotation.clone().z * (float)Math.PI) / 180.0f;
 		
 		Matrix4 hM = Matrix4.createRotationX(horizontal);
 		Matrix4 vM = Matrix4.createRotationY(vertical);
@@ -106,93 +105,18 @@ public class CameraController {
 		
 		boolean orbit = this.orbitMode;
 		
-		Matrix4 orbitAxes;
-		Matrix4 flyAxes;
-
-//		System.out.println("PRE");
-//		System.out.println("This is " + (transformation == this.camera.sceneCamera.transformation));
-//		System.out.println(transformation);
-//		System.out.println("");
 		if(orbit){
-			System.out.println(transformation);
-			transformation.mulAfter(this.camera.sceneCamera.transformation.clone().invert().mulAfter(parentWorld.clone().invert()));
-			System.out.println(transformation);
-			transformation.mulBefore(hM);
-			System.out.println(transformation);
-			transformation.mulBefore(vM);
-			System.out.println(transformation);
+			
+			Matrix4 toWorld = this.camera.sceneCamera.transformation.clone().invert().mulBefore(parentWorld.clone().invert());
+			transformation.mulBefore(toWorld);
 			transformation.mulBefore(zM);
-			System.out.println(transformation);
-			transformation.mulAfter(this.camera.sceneCamera.transformation.clone());
-			System.out.println(transformation);
-			System.out.println("");
-			
-//			Matrix4 localT = this.camera.sceneCamera.transformation.clone().invert().mulAfter(parentWorld.invert());
-//			transformation.set(localT.mulBefore(hM.mulBefore(vM.mulBefore(zM.mulBefore(transformation)))));
-////			
-			
-//			Matrix4 localT = transformation.invert().mulAfter(parentWorld.invert());
-//			orbitAxes = localT;
-//			
-//			System.out.println("ORBIT");
-//			System.out.println("");
-//			
-//			System.out.println("ORBIT AXES");
-//			System.out.println(orbitAxes);
-//			System.out.println("");
-			
-//			System.out.println("This is " + (transformation == orbitAxes));
-//			System.out.println("");
-			
-//			orbitAxes.mulBefore(hM);
-//
-//			System.out.println("ORBIT TRANSFORM 1");
-//			System.out.println(transformation);
-//			System.out.println("");
-//			
-//			orbitAxes.mulBefore(vM);
-//
-//			System.out.println("ORBIT TRANSFORM 2");
-//			System.out.println(transformation);
-//			System.out.println("");
-//			
-//			orbitAxes.mulBefore(zM);
-//
-//			System.out.println("ORBIT TRANSFORM 3");
-//			System.out.println(transformation);
-//			System.out.println("");
-//			
-//			orbitAxes.mulBefore(localT.invert());
-//
-//			System.out.println("ORBIT TRANSFORM fin");
-//			System.out.println(transformation);
-//			System.out.println("");
-			
-//			System.out.println("This is " + (transformation == orbitAxes));
-//			System.out.println("");
+			transformation.mulBefore(vM);
+			transformation.mulBefore(hM);
+			transformation.mulBefore(toWorld.invert());
 		} else {
-			flyAxes = transformation.clone();
-			
-			System.out.println("FLY");
-			System.out.println("");
-			
-			System.out.println("FLY AXES");
-			System.out.println(flyAxes);
-			System.out.println("");
-			
-//			System.out.println("This is " + (transformation == flyAxes));
-//			System.out.println("");
-			
-			flyAxes.mulBefore(transformation.mulBefore(hM));
-			flyAxes.mulBefore(transformation.mulBefore(vM));
-			flyAxes.mulBefore(transformation.mulBefore(zM));
-			
-			System.out.println("FLY TRANSFORM");
-			System.out.println(transformation);
-			System.out.println("");
-			
-//			System.out.println("This is " + (transformation == flyAxes));
-//			System.out.println("");
+			transformation.mulBefore(hM);
+			transformation.mulBefore(vM);
+			transformation.mulBefore(zM);
 		}
 		
 		
