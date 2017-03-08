@@ -28,6 +28,7 @@ import egl.BlendState;
 import egl.DepthState;
 import egl.IDisposable;
 import egl.RasterizerState;
+import egl.math.Matrix3;
 import egl.math.Matrix4;
 import egl.math.Vector2;
 import egl.math.Vector3;
@@ -208,9 +209,82 @@ public class ManipController implements IDisposable {
 		// There are many ways to compute a viewing ray, but perhaps the simplest is to take a pair of points that are on the ray,
 		// whose coordinates are simple in the canonical view space, and map them into world space using the appropriate matrix operations.
 		
-		// You may find it helpful to structure your code into a few helper functions; ours is about 150 lines.
+		// You may find it helpful to structure your code into a few helper functions; ours is about 150 lines.	
+	
 		
 		// TODO#A3#Part 4
+		
+		System.out.println("Type is " + manip.type);
+		System.out.println("Axis is " + manip.axis);
+		
+		// Axis/Type to Number Relationships
+		
+		//    Axis           Type
+		// 0 / 1 / 2      0 / 1 / 2
+		// X / Y / Z      s / r / t
+
+		//In words:
+		//0 axis is X
+		//1 axis is Y
+		//2 axis is Z
+		
+		//0 type is scale
+		//1 type is rotation
+		//2 type is translation
+		
+		Matrix4 toWorld = camera.mWorldTransform.clone();
+		Matrix3 toWorldAxes = toWorld.clone().getAxes();
+		
+		Vector3 lastMouseV3 = new Vector3(lastMousePos.x, lastMousePos.y, 1);
+		Vector3 lastMouseWorld = toWorldAxes.clone().mul(lastMouseV3).normalize();
+		
+		Vector3 currMouseV3 = new Vector3(curMousePos.x, curMousePos.y, 1);
+		Vector3 currMouseWorld = toWorldAxes.clone().mul(currMouseV3).normalize();
+		
+		//	I believe I've successfully transferred the mouse coordinates to worldspace
+		//	and normalized them.
+		System.out.println("");
+		System.out.println(lastMouseWorld);
+		System.out.println("");
+		System.out.println(currMouseWorld);
+		System.out.println("");
+		
+		//	What next? 
+		//	p = o + t(d)
+		
+		//	Finding d, will be equal to axis that is being maniped, but - or +
+		Vector3 manipDir;
+		
+		// X-AXIS
+		if(manip.axis == 0){
+			if (lastMouseWorld.x > currMouseWorld.x){
+				manipDir = new Vector3(-1,0,0);
+			} else {
+				manipDir = new Vector3(1,0,0);
+			}
+			
+		// Y-AXIS
+		} else if (manip.axis == 1){
+			if (lastMouseWorld.y > currMouseWorld.y){
+				manipDir = new Vector3(0,-1,0);
+			} else {
+				manipDir = new Vector3(0,1,0);
+			}
+			
+		// Z-AXIS
+		} else {
+			if (lastMouseWorld.z > currMouseWorld.z){
+				manipDir = new Vector3(0,0,-1);
+			} else {
+				manipDir = new Vector3(0,0,1);
+			}
+		}
+		
+		//	Theoretically found correct manip dir, now we need to find o
+		//	Should this not be the camera viewpoint? Or, where our eyes would be in the scene?
+		
+		//	NEXT STEPS: FIND ORIGIN, SOLVE FOR T, APPLY T
+		
 	}
 	
 	public void checkMouse(int mx, int my, RenderCamera camera) {
