@@ -88,7 +88,9 @@ public class RenderCamera extends RenderObject {
 			mPer = Matrix4.createPerspective((float)w, (float)h, (float)nearPoint, (float)farPoint);
 			
 			Matrix4 viewProj = mPer.clone().mulBefore(camTransform.clone());
-			
+
+			this.mView.set(camTransform);
+			this.mProj.set(mPer);
 			this.mViewProjection.set(viewProj.clone());
 			
 		} else {
@@ -97,7 +99,9 @@ public class RenderCamera extends RenderObject {
 			mOrth = Matrix4.createOrthographic((float)w, (float)h, (float)nearPoint, (float)farPoint);
 			
 			Matrix4 viewProj = mOrth.clone().mulBefore(camTransform.clone());
-			
+
+			this.mView.set(camTransform);
+			this.mProj.set(mOrth);
 			this.mViewProjection.set(viewProj.clone());
 		}
 		
