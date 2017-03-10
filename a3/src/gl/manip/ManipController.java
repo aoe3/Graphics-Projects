@@ -230,21 +230,28 @@ public class ManipController implements IDisposable {
 		//0 type is scale
 		//1 type is rotation
 		//2 type is translation
-		
-		Matrix4 toWorld = camera.mWorldTransform.clone();
+
+		Matrix4 canToWorld = camera.mViewProjection.clone().invert();
+		Matrix4 canToCam = camera.mProj.clone().invert();
+		Matrix4 camToWorld = camera.mView.clone().invert();
+		Matrix4 worldToObj = object.mWorldTransform.clone().invert();
+		Matrix4 objToWorld = object.mWorldTransform;
+		Matrix4 worldToCam = camera.mView;
 //		Matrix3 toWorldAxes = toWorld.clone().getAxes();
-		
+
 		Vector4 lastMouseV4 = new Vector4(lastMousePos.x, lastMousePos.y, 1, 1);
-		Vector4 lastMouseWorld = toWorld.clone().mul(lastMouseV4).normalize();
-		
+		Vector4 lastMouseWorld = canToWorld.clone().mul(lastMouseV4).normalize();
+		Vector4 lastMouseManip = worldToObj.clone().mul(lastMouseWorld).normalize();
+
 		Vector4 currMouseV4 = new Vector4(curMousePos.x, curMousePos.y, 1, 1);
-		Vector4 currMouseWorld = toWorld.clone().mul(currMouseV4).normalize();
+		Vector4 currMouseWorld = canToWorld.clone().mul(currMouseV4).normalize();
+		Vector4 currMouseManip = worldToObj.clone().mul(currMouseWorld).normalize();
 		
 		//	I believe I've successfully transferred the mouse coordinates to worldspace
 		//	and normalized them.
 		System.out.println("");
-		System.out.println("Last mouse world: " + lastMouseWorld);
-		System.out.println("Current mouse world: " + currMouseWorld);
+		System.out.println("Last mouse cam: " + lastMouseWorld);
+		System.out.println("Current mouse cam: " + currMouseWorld);
 		System.out.println("");
 		
 		//	What next? 
@@ -256,7 +263,7 @@ public class ManipController implements IDisposable {
 		// X-AXIS
 		boolean negative = false;
 		if(manip.axis == 0){
-			if (lastMouseWorld.x > currMouseWorld.x){
+			if (lastMouseManip.x > currMouseManip.x){
 				manipDir4 = new Vector4(-1,0,0,1);
 				negative = true;
 			} else {
@@ -265,7 +272,7 @@ public class ManipController implements IDisposable {
 			
 		// Y-AXIS
 		} else if (manip.axis == 1){
-			if (lastMouseWorld.y > currMouseWorld.y){
+			if (lastMouseManip.y > currMouseManip.y){
 				manipDir4 = new Vector4(0,-1,0,1);
 				negative = true;
 			} else {
@@ -274,7 +281,7 @@ public class ManipController implements IDisposable {
 			
 		// Z-AXIS
 		} else {
-			if (lastMouseWorld.z > currMouseWorld.z){
+			if (lastMouseManip.z > currMouseManip.z){
 				manipDir4 = new Vector4(0,0,-1,1);
 				negative = true;
 			} else {
@@ -286,8 +293,6 @@ public class ManipController implements IDisposable {
 		//	Should this not be the camera viewpoint? Or, where our eyes would be in the scene?
 
 		//	NEXT STEPS: FIND ORIGIN, SOLVE FOR T, APPLY T
-		Matrix4 objToWorld = object.mWorldTransform;
-		Matrix4 worldToCam = camera.mView;
 
 		// convert manipulator direction vector into camera space
 		manipDir4 = objToWorld.clone().mulBefore(worldToCam).mul(manipDir4);
@@ -331,14 +336,19 @@ public class ManipController implements IDisposable {
 		// Find closest point to mouse along manipulator direction ray
 		Vector3 ptLastCam = closestPt(origin, manipDir, lastMouseCam);
 		Vector3 ptCurrCam = closestPt(origin, manipDir, currMouseCam);
+
+//		System.out.println("tLast: " + tLast);
+//		System.out.println("tCurrent: " + tCurr);
+
 		System.out.println("Closest point to Last Mouse: " + ptLastCam);
 		System.out.println("Closest point to Current Mouse: " + ptCurrCam);
+		System.out.println("");
 
-		// convert closest point to world space
+		// convert closest point to manipulator (object) space
 		Vector4 ptLast = new Vector4(ptLastCam.x, ptLastCam.y, ptLastCam.z, 1f);
 		Vector4 ptCurr = new Vector4(ptCurrCam.x, ptCurrCam.y, ptCurrCam.z, 1f);
-		ptLast = worldToCam.clone().invert().mul(ptLast);
-		ptCurr = worldToCam.clone().invert().mul(ptCurr);
+		ptLast = camToWorld.clone().mulBefore(worldToObj).mul(ptLast);
+		ptCurr = camToWorld.clone().mulBefore(worldToObj).mul(ptCurr);
 		ptLast.div(ptLast.w);
 		ptCurr.div(ptCurr.w);
 		Vector3 ptLast3 = new Vector3(ptLast.x, ptLast.y, ptLast.z);
