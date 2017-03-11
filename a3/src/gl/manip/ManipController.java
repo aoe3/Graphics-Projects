@@ -340,16 +340,21 @@ public class ManipController implements IDisposable {
 	}
 
 	public void applyTranslation(Manipulator manip, RenderObject object, Vector3 ptLast, Vector3 ptCurr) {
+		float dist;
 		Matrix4 T = new Matrix4();
 		if (manip.axis == 0) {			// x-axis
-			float dist = ptCurr.x-ptLast.x;
+			dist = ptCurr.x-ptLast.x;
 			Matrix4.createTranslation(dist, 0, 0, T);
 		} else if (manip.axis == 1) {	// y-axis
-			float dist = ptCurr.y-ptLast.y;
+			dist = ptCurr.y-ptLast.y;
 			Matrix4.createTranslation(0, dist, 0, T);
 		} else {						// z-axis
-			float dist = ptCurr.z-ptLast.z;
+			dist = ptCurr.z-ptLast.z;
 			Matrix4.createTranslation(0, 0, dist, T);
+		}
+
+		if (Float.isNaN(dist)) {
+			T = new Matrix4();
 		}
 
 		if (this.parentSpace) {
