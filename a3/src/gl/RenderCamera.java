@@ -80,29 +80,29 @@ public class RenderCamera extends RenderObject {
 		boolean perspective = this.sceneCamera.isPerspective;
 		double nearPoint = this.sceneCamera.zPlanes.x;
 		double farPoint = this.sceneCamera.zPlanes.y;
-		Matrix4 camTransform = this.mWorldTransform.invert().clone();
+		Matrix4 camTransform = this.mWorldTransform.clone().invert();
 		
 		if (perspective){
-			Matrix4 mPer;
+			Matrix4 mPer = new Matrix4();
 			
-			mPer = Matrix4.createPerspective((float)w, (float)h, (float)nearPoint, (float)farPoint);
+			Matrix4.createPerspective((float)w, (float)h, (float)nearPoint, (float)farPoint, mPer);
 			
-			Matrix4 viewProj = mPer.clone().mulBefore(camTransform.clone());
+			Matrix4 viewProj = mPer.clone().mulBefore(camTransform);
 
 			this.mView.set(camTransform);
 			this.mProj.set(mPer);
-			this.mViewProjection.set(viewProj.clone());
+			this.mViewProjection.set(viewProj);
 			
 		} else {
-			Matrix4 mOrth;
+			Matrix4 mOrth = new Matrix4();
 			
-			mOrth = Matrix4.createOrthographic((float)w, (float)h, (float)nearPoint, (float)farPoint);
+			Matrix4.createOrthographic((float)w, (float)h, (float)nearPoint, (float)farPoint, mOrth);
 			
-			Matrix4 viewProj = mOrth.clone().mulBefore(camTransform.clone());
+			Matrix4 viewProj = mOrth.clone().mulBefore(camTransform);
 
 			this.mView.set(camTransform);
 			this.mProj.set(mOrth);
-			this.mViewProjection.set(viewProj.clone());
+			this.mViewProjection.set(viewProj);
 		}
 		
 	}	
