@@ -212,10 +212,6 @@ public class ManipController implements IDisposable {
 	
 		
 		// TODO#A3#Part 4
-		
-		System.out.println("Type is " + manip.type);
-		System.out.println("Axis is " + manip.axis);
-		
 		// Axis/Type to Number Relationships
 		
 		//    Axis           Type
@@ -231,108 +227,48 @@ public class ManipController implements IDisposable {
 		//1 type is rotation
 		//2 type is translation
 
-		Matrix4 canToWorld = camera.mViewProjection.clone().invert();
 		Matrix4 canToCam = camera.mProj.clone().invert();
-		Matrix4 camToWorld = camera.mWorldTransform;
+		Matrix4 camToWorld = camera.mView.clone().invert();
 		Matrix4 worldToObj = object.mWorldTransform.clone().invert();
 		Matrix4 objToWorld = object.mWorldTransform;
 		Matrix4 worldToCam = camera.mView;
-//		Matrix3 toWorldAxes = toWorld.clone().getAxes();
 
-		Vector4 lastMouseV4 = new Vector4(lastMousePos.x, lastMousePos.y, 1, 1);
-		Vector4 lastMouseWorld = canToWorld.clone().mul(lastMouseV4).normalize();
-		Vector4 lastMouseManip = worldToObj.clone().mul(lastMouseWorld).normalize();
-
-		Vector4 currMouseV4 = new Vector4(curMousePos.x, curMousePos.y, 1, 1);
-		Vector4 currMouseWorld = canToWorld.clone().mul(currMouseV4).normalize();
-		Vector4 currMouseManip = worldToObj.clone().mul(currMouseWorld).normalize();
-		
-		//	I believe I've successfully transferred the mouse coordinates to worldspace
-		//	and normalized them.
-		System.out.println("");
-		System.out.println("Last mouse world: " + lastMouseWorld);
-		System.out.println("Current mouse world: " + currMouseWorld);
-		System.out.println("");
-		
-		//	What next? 
-		//	p = o + t(d)
-		
-		//	Finding d, will be equal to axis that is being maniped, but - or +
 		Vector4 manipDir4;		// Direction ray in manipulator frame
-		
+
 		// X-AXIS
-		boolean negative = false;
 		if(manip.axis == 0){
-			if (lastMouseManip.x > currMouseManip.x){
-				manipDir4 = new Vector4(1,0,0,1);
-				negative = false;
-			} else {
-				manipDir4 = new Vector4(1,0,0,1);
-			}
+			manipDir4 = new Vector4(1,0,0,1);
 			
 		// Y-AXIS
 		} else if (manip.axis == 1){
-			if (lastMouseManip.y > currMouseManip.y){
-				manipDir4 = new Vector4(0,1,0,1);
-				negative = false;
-			} else {
-				manipDir4 = new Vector4(0,1,0,1);
-			}
+			manipDir4 = new Vector4(0,1,0,1);
 			
 		// Z-AXIS
 		} else {
-			if (lastMouseManip.z < currMouseManip.z){
-				manipDir4 = new Vector4(0,0,1,1);
-			} else {
-				manipDir4 = new Vector4(0,0,1,1);
-				negative = false;
-			}
+			manipDir4 = new Vector4(0,0,1,1);
 		}
-		
-		//	Theoretically found correct manip dir, now we need to find o
-		//	Should this not be the camera viewpoint? Or, where our eyes would be in the scene?
-
-		//	NEXT STEPS: FIND ORIGIN, SOLVE FOR T, APPLY T
 
 		// convert manipulator origin to camera space
-		Vector4 origin4 = objToWorld.clone().mulBefore(worldToCam).mul(new Vector4(0,0,0,1));		// manipulator origin in world coordinates
-		origin4.div(origin4.w);
-//		Vector4 origin4 = worldToCam.clone().mul(oInWorld);
-//		origin4.div(origin4.w);
+		Vector4 origin4 = objToWorld.clone().mulAfter(worldToCam).mul(new Vector4(0,0,0,1)).homogenize();		// manipulator origin in world coordinates
 		Vector3 origin = new Vector3(origin4.x, origin4.y, origin4.z);
 
 		// convert manipulator direction vector into camera space
-		System.out.println(manipDir4);
-		manipDir4 = objToWorld.clone().mulAfter(worldToCam).mul(manipDir4);
-		System.out.println(manipDir4);
-		manipDir4.div(manipDir4.w);
-		System.out.println(manipDir4);
+		manipDir4 = objToWorld.clone().mulAfter(worldToCam).mul(manipDir4).homogenize();
 		Vector3 manipDir = new Vector3(manipDir4.x, manipDir4.y, manipDir4.z);
-		System.out.println(manipDir);
-		System.out.println(origin);
 		manipDir.sub(origin).normalize();
-
-		System.out.println("Manipulator Origin: " + origin);
-		System.out.println("Manipulator Direction: " + manipDir);
-		System.out.println("");
 
 		// camera points directly in -z direction in camera space
 		Vector3 imgPlaneN = new Vector3(0,0,-1);
 		Vector3 imgPlaneP = imgPlaneN.clone().cross(manipDir).normalize();
 
-		System.out.println("Image Plane Normal: " + imgPlaneN);
-		System.out.println("Ray Parallel to Image Plane: " + imgPlaneP);
-
 		// find normal vector of manipulator plane
 		Vector3 manipN = imgPlaneP.clone().cross(manipDir).normalize();
-		System.out.println("Manipulator (Plane) Normal: " + manipN);
-		System.out.println("");
 
-		// convert mouse positions to camera space
-		Vector4 lastMouseCam4 = worldToCam.mul(lastMouseWorld);
-		Vector4 currMouseCam4 = worldToCam.mul(currMouseWorld);
-		lastMouseCam4.div(lastMouseCam4.w);
-		currMouseCam4.div(currMouseCam4.w);
+		// convert mouse positions to camera space (from canonical)
+		Vector4 lastMouseCam4 = new Vector4(lastMousePos.x, lastMousePos.y, 1, 1);
+		Vector4 currMouseCam4 = new Vector4(curMousePos.x, curMousePos.y, 1, 1);
+		lastMouseCam4 = canToCam.clone().mul(lastMouseCam4).normalize().homogenize();
+		currMouseCam4 = canToCam.clone().mul(currMouseCam4).normalize().homogenize();
 		Vector3 lastMouseCam = new Vector3(lastMouseCam4.x, lastMouseCam4.y, lastMouseCam4.z);
 		Vector3 currMouseCam = new Vector3(currMouseCam4.x, currMouseCam4.y, currMouseCam4.z);
 
@@ -344,71 +280,35 @@ public class ManipController implements IDisposable {
 		Vector3 ptLastCam = closestPt(origin, manipDir, lastMouseCam);
 		Vector3 ptCurrCam = closestPt(origin, manipDir, currMouseCam);
 
-//		System.out.println("tLast: " + tLast);
-//		System.out.println("tCurrent: " + tCurr);
-
-		System.out.println("Closest point to Last Mouse: " + ptLastCam);
-		System.out.println("Closest point to Current Mouse: " + ptCurrCam);
-		System.out.println("");
-
 		// convert closest point to manipulator (object) space
 		Vector4 ptLast = new Vector4(ptLastCam.x, ptLastCam.y, ptLastCam.z, 1f);
 		Vector4 ptCurr = new Vector4(ptCurrCam.x, ptCurrCam.y, ptCurrCam.z, 1f);
-		System.out.println(ptLast);
-		ptLast = camToWorld.clone().mulBefore(worldToObj).mul(ptLast);
-		ptCurr = camToWorld.clone().mulBefore(worldToObj).mul(ptCurr);
-		System.out.println(ptLast);
-		ptLast.div(ptLast.w);
-		ptCurr.div(ptCurr.w);
-		System.out.println(ptLast);
+		ptLast = camToWorld.clone().mulAfter(worldToObj).mul(ptLast).homogenize();
+		ptCurr = camToWorld.clone().mulAfter(worldToObj).mul(ptCurr).homogenize();
 		Vector3 ptLast3 = new Vector3(ptLast.x, ptLast.y, ptLast.z);
 		Vector3 ptCurr3 = new Vector3(ptCurr.x, ptCurr.y, ptCurr.z);
 
-//		System.out.println("camToWorld: " + camToWorld);
-//		System.out.println("worldToCam: " + worldToCam);
-//		System.out.println("objToWorld: " + objToWorld);
-//		System.out.println("worldToObj: " + worldToObj);
-//		System.out.println("");
-		System.out.println("Closest point to Last Mouse (Manipulator Space): " + ptLast3);
-		System.out.println("Closest point to Current Mouse (Manipulator Space): " + ptCurr3);
-		System.out.println("");
-
-		// apply specific transformations
+		// apply specific transformations in manipulator (object) space
 		if (manip.type == 0) {			// scale
-			applyScale(manip, object, ptLast3, ptCurr3, new Vector3(0,0,0), negative);
+			applyScale(manip, object, ptLast3, ptCurr3);
 		} else if (manip.type == 1) {	// rotation
 			applyRotation(manip, object, lastMousePos, curMousePos);
 		} else {						// translation
-			applyTranslation(manip, object, ptLast3, ptCurr3, new Vector3(0,0,0), negative);
+			applyTranslation(manip, object, ptLast3, ptCurr3);
 		}
 	}
 
-	public void applyScale(Manipulator manip, RenderObject object, Vector3 ptLast, Vector3 ptCurr, Vector3 origin, boolean negative) {
-//		float ratio; = ptCurr.clone().dist(origin) / ptLast.clone().dist(origin) / 4f;
-//		if (negative) {
-//			ratio*=-1;
-//		}
-//		ratio+=1;
-//		System.out.println("Scale ratio: " + ratio);
+	public void applyScale(Manipulator manip, RenderObject object, Vector3 ptLast, Vector3 ptCurr) {
 		float ratio;
 		Matrix4 T = new Matrix4();
 		if (manip.axis == 0) {			// x-axis
-			ratio = (ptCurr.x - origin.x) / (ptLast.x - origin.x);
-			System.out.println(ptCurr.x - origin.x);
-			System.out.println(ptLast.x - origin.x);
-			System.out.println(ratio);
+			ratio = ptCurr.x / ptLast.x;
 			Matrix4.createScale(ratio, 1, 1, T);
 		} else if (manip.axis == 1) {	// y-axis
-			ratio = (ptCurr.y - origin.y) / (ptLast.y - origin.y);
-			System.out.println(ptCurr.y - origin.y);
-			System.out.println(ptLast.y - origin.y);
-			System.out.println(ratio);
+			ratio = ptCurr.y / ptLast.y;
 			Matrix4.createScale(1, ratio, 1, T);
 		} else {						// z-axis
-			ratio = (ptCurr.z - origin.z) / (ptLast.z - origin.z);
-			System.out.println(ptCurr.z - origin.z);
-			System.out.println(ptLast.z - origin.z);
-			System.out.println(ratio);
+			ratio = ptCurr.z / ptLast.z;
 			Matrix4.createScale(1, 1, ratio, T);
 		}
 
@@ -420,11 +320,8 @@ public class ManipController implements IDisposable {
 	}
 
 	public void applyRotation(Manipulator manip, RenderObject object, Vector2 ptLast, Vector2 ptCurr) {
-		float drag = ptCurr.y-ptLast.y;
-		float theta = drag*2f*(float)Math.PI;
-
-		System.out.println("Drag: " + drag);
-		System.out.println("Theta: " + theta);
+		float dy = ptCurr.y-ptLast.y;
+		float theta = dy*2f*(float)Math.PI;
 
 		Matrix4 T = new Matrix4();
 		if (manip.axis == 0) {			// x-axis
@@ -442,30 +339,16 @@ public class ManipController implements IDisposable {
 		}
 	}
 
-	public void applyTranslation(Manipulator manip, RenderObject object, Vector3 ptLast, Vector3 ptCurr, Vector3 origin, boolean negative) {
-		negative = false;
-		System.out.println("Ray from origin to point on axis: " + ptCurr.clone().sub(origin));
-
-//		System.out.println("Distance: " + dist);
-
+	public void applyTranslation(Manipulator manip, RenderObject object, Vector3 ptLast, Vector3 ptCurr) {
 		Matrix4 T = new Matrix4();
 		if (manip.axis == 0) {			// x-axis
 			float dist = ptCurr.x-ptLast.x;
-			if (negative) {
-				dist*=-1;
-			}
 			Matrix4.createTranslation(dist, 0, 0, T);
 		} else if (manip.axis == 1) {	// y-axis
 			float dist = ptCurr.y-ptLast.y;
-			if (negative) {
-				dist*=-1;
-			}
 			Matrix4.createTranslation(0, dist, 0, T);
 		} else {						// z-axis
 			float dist = ptCurr.z-ptLast.z;
-			if (negative) {
-				dist*=-1;
-			}
 			Matrix4.createTranslation(0, 0, dist, T);
 		}
 
@@ -485,14 +368,11 @@ public class ManipController implements IDisposable {
 	}
 
 	public Vector3 closestPt(Vector3 origin, Vector3 dir, Vector3 mousePt) {
-//		Vector3 originSubMouse = origin.clone().sub(mousePt);
 		float oDotD = origin.clone().dot(dir);
 		float mDotD = mousePt.clone().dot(dir);
 		float comp1 = -(oDotD - mDotD);
-//		float comp1 = dir.clone().dot(originSubMouse);
 		float tCoeff = dir.clone().dot(dir);
 		float t = comp1/tCoeff;
-		System.out.println("t: " + t);
 		return origin.clone().add(dir.clone().mul(t));
 	}
 	
