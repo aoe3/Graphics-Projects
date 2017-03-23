@@ -78,10 +78,27 @@ attribute vec3 tangent;  // In object space.
 attribute vec3 tangent2; // In object space.
 
 // TODO#A4: Declare any varyings here.
+varying vec2 vUv; // UV coordinates.
+varying vec3 vNormal; // Normal in eye space.
+varying vec4 vPosition; // Pposition in eye space.
+varying vec4 eyeTangent; //tangent in eye space.
+varying vec4 eyeTangent2;  //tangent2 in eye space.
 
 void main() {
     // TODO#A4: Compute gl_Position, as well as any varyings you need in the fragment shader.
-    gl_Position = vec4(1.0); // placeholder
+    // Calculate point in eye space.
+    vPosition = modelViewMatrix * vec4(position, 1.0);
+    // Calculate projected point.
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+
+    vUv = uv;
+    // Here goes nothing
+
+    //Convert tangent to eyespace
+    eyeTangent = normalize(modelViewMatrix * vec4(tangent, 0.0));
+    eyeTangent2 = normalize(modelViewMatrix * vec4(tangent2, 0.0));
+    vNormal = normalize((normalMatrix * normal).xyz);
+
 }
         </script>
 <!-----------------------------------------------------------------------------
@@ -99,11 +116,47 @@ uniform sampler2D diffuseTexture; // k_d, the diffuse color. Use texture2D to lo
 uniform sampler2D normalMap; // Subtract 0.5 from each component to get the tangent, tangent2, and normal weights.
 
 // TODO#A4: Declare any varyings here.
+varying vec2 vUv; // Fragment UV coordinates.
+varying vec3 vNormal; // Fragment normal in eye space.
+varying vec4 vPosition; // Fragment position in eye space.
+varying vec4 eyeTangent; //tangent in eye space.
+varying vec4 eyeTangent2;  //tangent2 in eye space.
 
 void main() {
     // TODO#A4: Implement the reflectance function here using the normal computed from the normalMap, 
     // adjusted by the bumpiness uniform. Either Phong or Cook-Torrance is fine.
-    gl_FragColor = vec4(1.0); // placeholder
+    // interpolating normals will change the length of the normal, so renormalize the normal.
+
+    //create normal map texture weights
+    vec4 mapping = texture2D(normalMap, vUv);
+
+    //scale tangent, tangent1 and normal
+    vec4 firstterm = eyeTangent * (mapping.x - 0.5) * bumpiness;
+    vec4 secondterm = eyeTangent2 * (mapping.y - 0.5) * bumpiness;
+    vec4 thirdterm = vec4((vNormal * (mapping.z - 0.5)), 0.0);
+
+    vec4 computedNormal = firstterm + secondterm + thirdterm;
+
+    vec3 N = normalize(computedNormal.xyz);
+    vec3 V = normalize(-vPosition.xyz);
+    
+    vec4 finalColor = vec4(0.0, 0.0, 0.0, 0.0);
+
+    for (int i = 0; i < NUM_LIGHTS; i++) {
+        float r = length(lightPositions[i] - vPosition.xyz);
+        vec3 L = normalize(lightPositions[i] - vPosition.xyz); 
+        vec3 H = normalize(L + V);
+
+        // calculate diffuse term
+        vec4 Idiff = texture2D(diffuseTexture, vUv) * max(dot(N, L), 0.0);
+
+        // calculate specular term
+        vec4 Ispec = vec4(1.0) * pow(max(dot(N, H), 0.0), 1.0 / roughness);
+
+        finalColor += vec4(lightColors[i], 0.0) * (Idiff + Ispec) / (r*r);
+    }
+    
+    gl_FragColor = finalColor * exposure; 
 }
         </script>
 <!-----------------------------------------------------------------------------
