@@ -135,8 +135,11 @@ void main() {
     vec4 secondterm = eyeTangent2 * (mapping.y - 0.5) * bumpiness;
     vec4 thirdterm = vec4((vNormal * (mapping.z - 0.5)), 0.0);
 
+    //Add the terms together
     vec4 computedNormal = firstterm + secondterm + thirdterm;
 
+
+    //Set normal and normalize
     vec3 N = normalize(computedNormal.xyz);
     vec3 V = normalize(-vPosition.xyz);
     
