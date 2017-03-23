@@ -67,10 +67,27 @@
 // attribute vec2 uv;
 
 // TODO#A4: Declare any varyings here.
+varying vec2 vUv; // UV coordinates.
+varying vec3 vNormal; // Normal in eye space.
+varying vec4 vPosition; // Pposition in eye space.
+varying vec3 reflectDir; //reflection direction
 
 void main() {
     // TODO#A4: Compute gl_Position, as well as any varyings you need in the fragment shader.
-    gl_Position = vec4(1.0); // placeholder
+    // Calculate point in eye space.
+    vPosition = modelViewMatrix * vec4(position, 1.0);
+    // Calculate projected point.
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+
+    // We have to use the inverse transpose of the modelview matrix for the normal.
+    vNormal = normalize((normalMatrix * normal).xyz);
+    vUv = uv;
+
+    // set reflect direction with N and V
+    vec3 N = normalize(vNormal);
+    vec3 V = normalize(-vPosition.xyz);
+    float nDotV = dot(N, V);
+    reflectDir = 2.0 * nDotV * N - V;
 }
         </script>
 <!-----------------------------------------------------------------------------
@@ -82,10 +99,27 @@ uniform float exposure; // Multiply the final color by this.
 uniform samplerCube environmentMap; // Use samplerCube to look up into this.
 
 // TODO#A4: Declare any varyings here.
+varying vec2 vUv; // Fragment UV coordinates.
+varying vec3 vNormal; // Fragment normal in eye space.
+varying vec4 vPosition; // Fragment position in eye space.
+varying vec3 reflectDir; //reflection direction
 
 void main() {
     // TODO#A4: Implement the mirror reflection here.
-    gl_FragColor = vec4(1.0); // placeholder
+    // interpolating normals will change the length of the normal, so renormalize the normal.
+    
+    vec4 finalColor = vec4(0.0, 0.0, 0.0, 0.0);
+    //reflet direction computed in vertex declares
+    for (int i = 0; i < NUM_LIGHTS; i++) {
+
+        // get texture from cubeMap
+        vec4 reflectMeMaybe = textureCube(environmentMap, reflectDir);
+
+        finalColor += reflectMeMaybe;
+    }
+    
+    //apparently, all we need to do is return a mirror image of what our reflect direction sees, so... yeah...
+    gl_FragColor = finalColor * exposure; 
 }
         </script>
 <!-----------------------------------------------------------------------------
