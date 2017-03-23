@@ -78,13 +78,36 @@ uniform sampler2D displacementMap; // The displacement should be proportional to
 uniform float displacementScale; // Multiply all displacements by this.
 
 // TODO#A4: Declare any varyings here.
+varying vec2 vUv; // UV coordinates.
+varying vec3 vNormal; // Normal in eye space.
+varying vec4 vPosition; // Pposition in eye space.
 
 void main() {
     // TODO#A4: Compute the displaced vertex position. 
     // This should move the vertex along its normal by 
     // the average of the red, green, and blue channels of displacementMap, 
     // times displacementScale.
-    gl_Position = vec4(1.0); // placeholder
+
+    // We have to use the inverse transpose of the modelview matrix for the normal.
+    vNormal = normalize((normalMatrix * normal).xyz);
+    vUv = uv;
+
+    //Create height map
+    vec4 mapping = texture2D(displacementMap, vUv);
+
+    //Find mean of mapping
+    float mean = (mapping.x + mapping.y + mapping.z) ;
+
+    // Multiply mean by displacementScale
+    float toMove = mean * displacementScale;
+
+    //Scale normal according to previous calculation
+    vec3 scaledNormal = vNormal * toMove;
+
+    // Calculate point in eye space.
+    vPosition = modelViewMatrix * vec4(position+ scaledNormal, 1.0);
+    // Calculate projected point.
+    gl_Position = projectionMatrix * modelViewMatrix * vec4((position + scaledNormal), 1.0);
 }
         </script>
 <!-----------------------------------------------------------------------------
@@ -100,10 +123,33 @@ uniform float roughness; // For Phong or Cook-Torrance.
 uniform sampler2D diffuseTexture; // k_d, the diffuse color. Use texture2D to look up into this.
 
 // TODO#A4: Declare any varyings here.
+varying vec2 vUv; // Fragment UV coordinates.
+varying vec3 vNormal; // Fragment normal in eye space.
+varying vec4 vPosition; // Fragment position in eye space.
 
 void main() {
     // TODO#A4: Implement a reflectance function here. Either Phong or Cook-Torrance is fine.
-    gl_FragColor = vec4(1.0); // placeholder
+    // interpolating normals will change the length of the normal, so renormalize the normal.
+    vec3 N = normalize(vNormal);
+    vec3 V = normalize(-vPosition.xyz);
+    
+    vec4 finalColor = vec4(0.0, 0.0, 0.0, 0.0);
+
+    for (int i = 0; i < NUM_LIGHTS; i++) {
+        float r = length(lightPositions[i] - vPosition.xyz);
+        vec3 L = normalize(lightPositions[i] - vPosition.xyz); 
+        vec3 H = normalize(L + V);
+
+        // calculate diffuse term
+        vec4 Idiff = texture2D(diffuseTexture, vUv) * max(dot(N, L), 0.0);
+
+        // calculate specular term
+        vec4 Ispec = vec4(1.0) * pow(max(dot(N, H), 0.0), 1.0 / roughness);
+
+        finalColor += vec4(lightColors[i], 0.0) * (Idiff + Ispec) / (r*r);
+    }
+    
+    gl_FragColor = finalColor * exposure; 
 }
         </script>
 <!-----------------------------------------------------------------------------
