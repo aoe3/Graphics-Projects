@@ -71,10 +71,20 @@
 // attribute vec2 uv;
 
 // TODO#A4: Declare any varyings here.
+varying vec2 vUv; // UV coordinates.
+varying vec3 vNormal; // Normal in eye space.
+varying vec4 vPosition; // Pposition in eye space.
 
 void main() {
     // TODO#A4: Compute gl_Position, as well as any varyings you need in the fragment shader.
-    gl_Position = vec4(1.0); // placeholder
+    // Calculate point in eye space.
+    vPosition = modelViewMatrix * vec4(position, 1.0);
+    // Calculate projected point.
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+
+    // We have to use the inverse transpose of the modelview matrix for the normal.
+    vNormal = normalize((normalMatrix * normal).xyz);
+    vUv = uv;
 }
         </script>
 <!-----------------------------------------------------------------------------
@@ -90,10 +100,58 @@ uniform float roughness;
 uniform sampler2D diffuseTexture; // k_d, the diffuse color. Use texture2D to look up into this.
 
 // TODO#A4: Declare any varyings here. 
+varying vec2 vUv; // Fragment UV coordinates.
+varying vec3 vNormal; // Fragment normal in eye space.
+varying vec4 vPosition; // Fragment position in eye space.
 
 void main() {
-    // TODO#A4: Implement the reflectance function here.
-    gl_FragColor = vec4(1.0); // placeholder
+    // interpolating normals will change the length of the normal, so renormalize the normal.
+    vec3 N = normalize(vNormal);
+    vec3 V = normalize(-vPosition.xyz);
+    float pi = 3.1415926535897932384626433832795028841971693993751;
+    float e = 2.71828182845904523536028747135266249775724709369995;
+    
+    vec4 finalColor = vec4(0.0, 0.0, 0.0, 0.0);
+
+    for (int i = 0; i < NUM_LIGHTS; i++) {
+        float r = length(lightPositions[i] - vPosition.xyz);
+        vec3 L = normalize(lightPositions[i] - vPosition.xyz); 
+        vec3 H = normalize(L + V);
+
+        // calculate diffuse term
+        vec4 kd = texture2D(diffuseTexture, vUv);
+
+        // calculate specular term
+        vec4 ks = vec4(1.0);
+
+        //calc fresnel beta over pi
+        float fresnelBeta = 0.04 + ((1.0-0.04) * pow((1.0- dot(V,H)), 5.0));
+        float fBPI = fresnelBeta / pi;
+
+        //calc microfacet distribution dthetah
+        float nDotHSq = pow(dot(N, H), 2.0);
+        float mSq = pow(roughness, 2.0);
+        float exp = pow( e, ((nDotHSq - 1.0) / (mSq * nDotHSq )));
+        float denom = pow(mSq * (dot(N, H)), 4.0);
+        float dthetah = pow((1.0/denom), exp);
+
+        // calc G
+        float firstTerm = (2.0 * (dot(N, H)) * (dot(N, V)) )/ (dot(V,H));
+        float secondTerm = (2.0 * dot(N, H) * dot(N, L))/ dot(V,H);
+        float gnot = min(1.0,firstTerm);
+        float g = min(gnot, secondTerm);
+
+        //first half of color equation
+        float dthetahG = dthetah * g;
+        float nDotV = dot(N, V);
+        float nDotL = dot(N, L);
+        vec4 inParentheses = ks * fBPI * (dthetahG / (nDotV * nDotL)) + kd;
+
+        //full equation
+        finalColor += (vec4(lightColors[i], 0.0) * inParentheses * max(dot(N, L), 0.0) / (r*r)) + kd;
+    }
+    
+    gl_FragColor = finalColor * exposure; 
 }
         </script>
 <!-----------------------------------------------------------------------------
