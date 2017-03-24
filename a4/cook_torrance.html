@@ -122,33 +122,39 @@ void main() {
         vec4 kd = texture2D(diffuseTexture, vUv);
 
         // calculate specular term
-        vec4 ks = vec4(1.0);
+        vec4 ks = vec4(1.0, 1.0, 1.0, 1.0);
 
         //calc fresnel beta over pi
-        float fresnelBeta = 0.04 + ((1.0-0.04) * pow((1.0- dot(V,H)), 5.0));
+        float vDotH = dot(V, H);
+        float fresnelBeta = 0.04 + ((1.0 - 0.04) * (pow((1.0 - vDotH), 5.0)));
         float fBPI = fresnelBeta / pi;
 
         //calc microfacet distribution dthetah
-        float nDotHSq = pow(dot(N, H), 2.0);
+        float nDotH = dot(N, H);
+        float nDotHSq = pow(nDotH, 2.0);
         float mSq = pow(roughness, 2.0);
-        float exp = pow( e, ((nDotHSq - 1.0) / (mSq * nDotHSq )));
-        float denom = pow(mSq * (dot(N, H)), 4.0);
-        float dthetah = pow((1.0/denom), exp);
+        float numexp = nDotHSq - 1.0;
+        float denexp = mSq * nDotHSq;
+        float exp = pow( e, (numexp / denexp));
+        float denom = mSq * (pow( nDotH, 4.0));
+        float dthetah = (1.0/denom) * exp;
 
         // calc G
-        float firstTerm = (2.0 * (dot(N, H)) * (dot(N, V)) )/ (dot(V,H));
-        float secondTerm = (2.0 * dot(N, H) * dot(N, L))/ dot(V,H);
+        float nDotV = dot(N, V);
+        
+        float nDotL = dot(N, L);
+        float firstTerm = (2.0 * nDotH * nDotV )/ vDotH;
+        float secondTerm = (2.0 * nDotH * nDotL)/ vDotH;
         float gnot = min(1.0,firstTerm);
         float g = min(gnot, secondTerm);
 
         //first half of color equation
         float dthetahG = dthetah * g;
-        float nDotV = dot(N, V);
-        float nDotL = dot(N, L);
-        vec4 inParentheses = ks * fBPI * (dthetahG / (nDotV * nDotL)) + kd;
+        float dthetaEq = dthetahG / (nDotV * nDotL);
+        vec4 inParentheses = ks * fBPI * dthetaEq + kd;
 
         //full equation
-        finalColor += (vec4(lightColors[i], 0.0) * inParentheses * max(dot(N, L), 0.0) / (r*r)) + kd;
+        finalColor += (vec4((lightColors[i]/ (pow(r,2.0))), 0.0) * inParentheses * max(dot(N, L), 0.0) ) + kd;
     }
     
     gl_FragColor = finalColor * exposure; 
