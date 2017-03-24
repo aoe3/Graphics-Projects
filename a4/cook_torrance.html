@@ -154,7 +154,7 @@ void main() {
         vec4 inParentheses = ks * fBPI * dthetaEq + kd;
 
         //full equation
-        finalColor += ((inParentheses * max(nDotL, 0.0) * ((vec4((lightColors[i]), 0.0) / (pow(r,2.0))))) + kd);
+        finalColor += (inParentheses * max(nDotL, 0.0) * ((vec4((lightColors[i]), 0.0) / (pow(r,2.0)))));
     }
     
     gl_FragColor = finalColor * exposure; 
