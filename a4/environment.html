@@ -110,13 +110,12 @@ void main() {
     
     vec4 finalColor = vec4(0.0, 0.0, 0.0, 0.0);
     //reflet direction computed in vertex declares
-    for (int i = 0; i < NUM_LIGHTS; i++) {
 
         // get texture from cubeMap
         vec4 reflectMeMaybe = textureCube(environmentMap, reflectDir);
 
         finalColor += reflectMeMaybe;
-    }
+    
     
     //apparently, all we need to do is return a mirror image of what our reflect direction sees, so... yeah...
     gl_FragColor = finalColor * exposure; 
