@@ -96,13 +96,13 @@ void main() {
     vec4 mapping = texture2D(displacementMap, vUv);
 
     //Find mean of mapping
-    float mean = (mapping.x + mapping.y + mapping.z) ;
+    float mean = (mapping.x + mapping.y + mapping.z) / 3.0 ;
 
     // Multiply mean by displacementScale
     float toMove = mean * displacementScale;
 
     //Scale normal according to previous calculation
-    vec3 scaledNormal = vNormal * toMove;
+    vec3 scaledNormal = normal * toMove;
 
     // Calculate point in eye space.
     vPosition = modelViewMatrix * vec4(position+ scaledNormal, 1.0);
