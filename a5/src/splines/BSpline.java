@@ -16,7 +16,29 @@ public class BSpline extends SplineCurve{
 			float eps) {
 		//TODO A5
 		
-		return new CubicBezier(new Vector2(), new Vector2(), new Vector2(), new Vector2(), eps);
+		Matrix4 bSplineCoeff = new Matrix4(-1.0f/6.0f,  1.0f/2.0f, -1.0f/2.0f, 1.0f/6.0f,
+											1.0f/2.0f, 		-1.0f, 	1.0f/2.0f, 		0f,
+											-1.0f/2.0f, 	0f, 	1.0f/2.0f, 		0f,
+											 1.0f/6.0f, 2.0f/3.0f, 	1.0f/6.0f, 		0f);
+
+		Matrix4 bezCoeff = new Matrix4 (-1,  3, -3, 1,
+										 3, -6,  3, 0,
+										-3,  3,  0, 0, 
+										 1,  0,  0, 0);
+		
+		Matrix4 bSplinePoints = new Matrix4(	p0.x, p0.y, 0, 0,
+				   								p1.x, p1.y, 0, 0,
+				   								p2.x, p2.y, 0, 0,
+				   								p3.x, p3.y, 0, 0);
+		
+		Matrix4 bezPoints = bezCoeff.invert().mulBefore(bSplineCoeff.mulBefore(bSplinePoints));
+		
+		Vector2 bezPoint0 = new Vector2(bezPoints.m[0], bezPoints.m[4]);
+		Vector2 bezPoint1 = new Vector2(bezPoints.m[1], bezPoints.m[5]);
+		Vector2 bezPoint2 = new Vector2(bezPoints.m[2], bezPoints.m[6]);
+		Vector2 bezPoint3 = new Vector2(bezPoints.m[3], bezPoints.m[7]);
+		
+		return new CubicBezier(bezPoint0, bezPoint1, bezPoint2, bezPoint3, eps);
 		//END SOLUTION
 	}
 	
