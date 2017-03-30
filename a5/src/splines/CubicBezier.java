@@ -63,11 +63,11 @@ public class CubicBezier {
 		Vector2[] points = {this.p0.clone(),this.p1.clone(),this.p2.clone(),this.p3.clone()};
 		tessellateRec(points, 0);
 		curvePoints.add(this.p0.clone());
-		Vector2 diff = (this.p0.clone().sub(this.p1.clone())).mul(3.0f).normalize();
-		curveTangents.add(this.p0.clone().sub(diff));
+		Vector2 diff = (this.p0.clone().sub(this.p1.clone())).mul(3.0f).negate().normalize();
+		curveTangents.add(diff);
 		findNormals(this.p0, this.p0, this.p1, curveTangents.get(curveTangents.size()-1));
 		for (int i=0; i<curvePoints.size(); i++) {
-//			System.out.println("Pt: " + "(" +curvePoints.get(i).x +"," + curvePoints.get(i).y +")");
+//			System.out.println("Pt :" + "(" +curvePoints.get(i).x +"," + curvePoints.get(i).y +")");
 //			System.out.println("Tan: " + "(" +curveTangents.get(i).x +"," + curveTangents.get(i).y +")");
 //			System.out.println("Norm: " + "(" +curveNormals.get(i).x +"," + curveNormals.get(i).y +")");
 //			System.out.println();
@@ -129,8 +129,8 @@ public class CubicBezier {
 		
 		//add points and tangents for the first R point/last L point
 		curvePoints.add(lPoints[3]);
-		Vector2 dist = (lPoints[3].clone().sub(lPoints[2].clone())).mul(3.0f).negate().normalize();
-		curveTangents.add(lPoints[3].clone().sub(dist));
+		Vector2 dist = (lPoints[3].clone().sub(lPoints[2].clone())).mul(3.0f).normalize();
+		curveTangents.add(dist);
 		
 		//get last added point and tangent
 		Vector2 currentPt = curvePoints.get(curvePoints.size()-1);
@@ -148,7 +148,8 @@ public class CubicBezier {
 	/**Tangent is in direction of controlPt2, FROM controlPt1*/
 	private void findNormals(Vector2 point, Vector2 controlPt1, Vector2 controlPt2, Vector2 tangent){
 		//find distance from point to tangent, need abs() because can't have negative distance
-		Vector2 dist = (point.clone().sub(tangent.clone())).abs();
+		Vector2 toTangent = point.clone().add(tangent.clone());
+		Vector2 dist = (point.clone().sub(toTangent)).abs();
 		//bool for where tangent is a vertical line, default = FALSE
 		boolean StraightVerticalLine;
 		
@@ -163,9 +164,9 @@ public class CubicBezier {
 			//handle case where tangent is a vertical line
 			//look at control pts to find out if we need to add or subtract from vector
 			if(controlPt1.y > controlPt2.y){ //pt1 higher than pt2
-				norm = new Vector2(1.0f, 0.0f);
-			} else { //pt1 lower than pt 2
 				norm = new Vector2(-1.0f, 0.0f);
+			} else { //pt1 lower than pt 2
+				norm = new Vector2(1.0f, 0.0f);
 			}
 		} else {
 			//tangent was a horizontal line
@@ -178,7 +179,7 @@ public class CubicBezier {
 				}
 			//tangent was not a horizontal line or vertical line
 			} else {
-					norm = new Vector2(-(tangent.y-point.y),(tangent.x-point.x));
+					norm = new Vector2((toTangent.y-point.y),-(toTangent.x-point.x));
 				
 
 /*NONE OF THIS SHIT BELOW WORKED **/
@@ -209,7 +210,7 @@ public class CubicBezier {
 			}
 		}
 
-		curveNormals.add(point.clone().add(norm.negate()));
+		curveNormals.add(norm.normalize());
 	}
     
     /**
