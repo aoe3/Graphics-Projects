@@ -184,7 +184,45 @@ public abstract class SplineCurve {
 	 */
 	private void setBeziers() {
 		//TODO A5
-		
+		//initalize bezier curves
+		this.bezierCurves = new ArrayList<CubicBezier>();
+		//iterate through points
+		for (int i=this.controlPoints.size()-3; i>=1; i--){
+			Vector2 controlPt1 = this.controlPoints.get(i-1);
+			Vector2 controlPt2 = this.controlPoints.get(i);
+			Vector2 controlPt3 = this.controlPoints.get(i+1);
+			Vector2 controlPt4 = this.controlPoints.get(i+2);
+			
+			CubicBezier bezPoints = toBezier(controlPt1, controlPt2, controlPt3, controlPt4, epsilon);
+			this.bezierCurves.add(bezPoints);
+		}
+		//if closed, connect to 0
+		if (isClosed){
+			//connect last, first, second, third
+			int i = this.controlPoints.size()-1;
+			Vector2 controlPt1 = this.controlPoints.get(i);
+			Vector2 controlPt2 = this.controlPoints.get(0);
+			Vector2 controlPt3 = this.controlPoints.get(1);
+			Vector2 controlPt4 = this.controlPoints.get(2);
+			CubicBezier bezPoints = toBezier(controlPt1, controlPt2, controlPt3, controlPt4, epsilon);
+			this.bezierCurves.add(bezPoints);
+			
+			//second-to-last, last, first, and second
+			Vector2 controlPt5 = this.controlPoints.get(i-1);
+			Vector2 controlPt6 = this.controlPoints.get(i);
+			Vector2 controlPt7 = this.controlPoints.get(0);
+			Vector2 controlPt8 = this.controlPoints.get(1);
+			CubicBezier bezPoints2 = toBezier(controlPt5, controlPt6, controlPt7, controlPt8, epsilon);
+			this.bezierCurves.add(bezPoints2);
+			
+			//third-to_last, second-to-last, last, first
+			Vector2 controlPt9 = this.controlPoints.get(i-2);
+			Vector2 controlPt10 = this.controlPoints.get(i-1);
+			Vector2 controlPt11 = this.controlPoints.get(i);
+			Vector2 controlPt12 = this.controlPoints.get(0);
+			CubicBezier bezPoints3 = toBezier(controlPt9, controlPt10, controlPt11, controlPt12, epsilon);
+			this.bezierCurves.add(bezPoints3);
+		} 
 	}
 	
 	/**
