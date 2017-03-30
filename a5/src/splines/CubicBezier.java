@@ -62,6 +62,7 @@ public class CubicBezier {
     	 // TODO A5
 		Vector2[] points = {p0,p1,p2,p3};
 		tessellateRec(points, 0);
+		curvePoints.add(p0);
 		for (int i=0; i<curvePoints.size(); i++) {
 			System.out.println(curvePoints.get(i));
 		}
@@ -84,17 +85,20 @@ public class CubicBezier {
 		lPoints[3] = currentLv[0];
 		rPoints[0] = currentLv[0];
 
-		curvePoints.add(lPoints[0]);
-		curvePoints.add(rPoints[0]);
-
 		Vector2 a = lPoints[1].clone().sub(lPoints[0]);
 		Vector2 b = lPoints[2].clone().sub(lPoints[1]);
-		float dotProd = a.clone().dot(b);
-		float theta = (float)Math.acos((double)(dotProd / a.clone().len() / b.clone().len()));
+		Vector2 c = lPoints[3].clone().sub(lPoints[2]);
+		float dotProd1 = a.clone().dot(b);
+		float dotProd2 = b.clone().dot(c);
+		float theta1 = (float)Math.acos((double)(dotProd1 / a.clone().len() / b.clone().len()));
+		float theta2 = (float)Math.acos((double)(dotProd2 / b.clone().len() / c.clone().len()));
 
-		if (theta > epsilon / 2f && recLv < 9) {
-			tessellateRec(lPoints, recLv+1);
+		if ((theta1 > epsilon / 2f || theta2 > epsilon / 2f) && recLv < 9) {
 			tessellateRec(rPoints, recLv+1);
+		}
+		curvePoints.add(lPoints[3]);
+		if ((theta1 > epsilon / 2f || theta2 > epsilon / 2f) && recLv < 9) {
+			tessellateRec(lPoints, recLv+1);
 		}
 	}
 	
@@ -155,6 +159,6 @@ public class CubicBezier {
     }
 
     public static void main(String[] args) {
-		CubicBezier cb = new CubicBezier(new Vector2(0,0), new Vector2(0,1), new Vector2(1,1), new Vector2(1,0), 1);
+		CubicBezier cb = new CubicBezier(new Vector2(0,0), new Vector2(0,1), new Vector2(1,1), new Vector2(1,0), .5f);
 	}
 }

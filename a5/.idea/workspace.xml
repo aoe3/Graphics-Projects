@@ -19,8 +19,8 @@
       <file leaf-file-name="CubicBezier.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/splines/CubicBezier.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="80">
-              <caret line="70" column="0" lean-forward="false" selection-start-line="70" selection-start-column="0" selection-end-line="70" selection-end-column="35" />
+            <state relative-caret-position="335">
+              <caret line="161" column="116" lean-forward="false" selection-start-line="161" selection-start-column="116" selection-end-line="161" selection-end-column="116" />
               <folding />
             </state>
           </provider>
@@ -451,7 +451,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="0" width="1932" height="1047" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -487,7 +487,9 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager />
+    <breakpoint-manager>
+      <option name="time" value="1" />
+    </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="antWorkspaceConfiguration">
@@ -529,8 +531,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/splines/CubicBezier.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="80">
-          <caret line="70" column="0" lean-forward="false" selection-start-line="70" selection-start-column="0" selection-end-line="70" selection-end-column="35" />
+        <state relative-caret-position="335">
+          <caret line="161" column="116" lean-forward="false" selection-start-line="161" selection-start-column="116" selection-end-line="161" selection-end-column="116" />
           <folding />
         </state>
       </provider>
