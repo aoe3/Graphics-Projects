@@ -58,50 +58,159 @@ public class CubicBezier {
      * array self.curvePoints, the tangents into self.curveTangents, and the normals into self.curveNormals.
      * The final point, p3, is not included, because cubic Beziers will be "strung together".
      */
-    private void tessellate() {
+	 private void tessellate() {
     	 // TODO A5
-		Vector2[] points = {p0,p1,p2,p3};
+		Vector2[] points = {this.p0.clone(),this.p1.clone(),this.p2.clone(),this.p3.clone()};
 		tessellateRec(points, 0);
-		curvePoints.add(p0);
+		curvePoints.add(this.p0.clone());
+		Vector2 diff = (this.p0.clone().sub(this.p1.clone())).mul(3.0f).normalize();
+		curveTangents.add(this.p0.clone().sub(diff));
+		findNormals(this.p0, this.p0, this.p1, curveTangents.get(curveTangents.size()-1));
 		for (int i=0; i<curvePoints.size(); i++) {
-			System.out.println(curvePoints.get(i));
+//			System.out.println("Pt: " + "(" +curvePoints.get(i).x +"," + curvePoints.get(i).y +")");
+//			System.out.println("Tan: " + "(" +curveTangents.get(i).x +"," + curveTangents.get(i).y +")");
+//			System.out.println("Norm: " + "(" +curveNormals.get(i).x +"," + curveNormals.get(i).y +")");
+//			System.out.println();
 		}
 	}
 
 	private void tessellateRec(Vector2[] points, int recLv) {
 //    	curvePoints.add(points[0]);
+		
+		//set current level of points
 		Vector2[] currentLv = points;
+		
+		//set dummy arrays to hold the left and right points
 		Vector2[] lPoints = new Vector2[4];
 		Vector2[] rPoints = new Vector2[4];
+		
+		//for each point in the current level 
 		for (int i=0; i<3; i++) {
+			
+			//set dummy array for the next level
 			Vector2[] nextLv = new Vector2[currentLv.length - 1];
+			
+			//iterate through points at this level
 			for (int j=0; j<currentLv.length-1; j++) {
+				//apply weights, 'u' and '1-u' to two adjacent points and add the result to the next level
 				nextLv[j] = (currentLv[j].clone().mul(.5f)).add(currentLv[j+1].clone().mul(.5f));
 			}
+			
+			//assign a point to the left curve
 			lPoints[i] = currentLv[0];
+			
+			//assign a point to the right curve
 			rPoints[3-i] = currentLv[3-i];
+			
+			//go down a recursion depth
 			currentLv = nextLv;
 		}
+		//connect L and R at a point
 		lPoints[3] = currentLv[0];
 		rPoints[0] = currentLv[0];
-
-		Vector2 a = lPoints[1].clone().sub(lPoints[0]);
-		Vector2 b = lPoints[2].clone().sub(lPoints[1]);
-		Vector2 c = lPoints[3].clone().sub(lPoints[2]);
-		float dotProd1 = a.clone().dot(b);
-		float dotProd2 = b.clone().dot(c);
+		
+		//Find distances between control points on left curve
+		Vector2 a = lPoints[1].clone().sub(lPoints[0].clone());
+		Vector2 b = lPoints[2].clone().sub(lPoints[1].clone());
+		Vector2 c = lPoints[3].clone().sub(lPoints[2].clone());
+		
+		// find dot products of adjacent vectors
+		float dotProd1 = a.clone().dot(b.clone());
+		float dotProd2 = b.clone().dot(c.clone());
+		
+		//create angles to compare with epsilon
 		float theta1 = (float)Math.acos((double)(dotProd1 / a.clone().len() / b.clone().len()));
 		float theta2 = (float)Math.acos((double)(dotProd2 / b.clone().len() / c.clone().len()));
 
+		//compare angles against epsilon for R
 		if ((theta1 > epsilon / 2f || theta2 > epsilon / 2f) && recLv < 9) {
 			tessellateRec(rPoints, recLv+1);
 		}
+		
+		//add points and tangents for the first R point/last L point
 		curvePoints.add(lPoints[3]);
+		Vector2 dist = (lPoints[3].clone().sub(lPoints[2].clone())).mul(3.0f).negate().normalize();
+		curveTangents.add(lPoints[3].clone().sub(dist));
+		
+		//get last added point and tangent
+		Vector2 currentPt = curvePoints.get(curvePoints.size()-1);
+		Vector2 currentTan = curveTangents.get(curveTangents.size()-1);
+		
+		//find normals
+		findNormals(currentPt, lPoints[2], lPoints[3], currentTan);
+		
+		//compare angles against epsilon for L
 		if ((theta1 > epsilon / 2f || theta2 > epsilon / 2f) && recLv < 9) {
 			tessellateRec(lPoints, recLv+1);
 		}
 	}
 	
+	/**Tangent is in direction of controlPt2, FROM controlPt1*/
+	private void findNormals(Vector2 point, Vector2 controlPt1, Vector2 controlPt2, Vector2 tangent){
+		//find distance from point to tangent, need abs() because can't have negative distance
+		Vector2 dist = (point.clone().sub(tangent.clone())).abs();
+		//bool for where tangent is a vertical line, default = FALSE
+		boolean StraightVerticalLine;
+		
+		if (dist.x == 0.0f){
+			StraightVerticalLine = true;
+		} else {
+			StraightVerticalLine = false;
+		}
+
+		Vector2 norm;
+		if(StraightVerticalLine){
+			//handle case where tangent is a vertical line
+			//look at control pts to find out if we need to add or subtract from vector
+			if(controlPt1.y > controlPt2.y){ //pt1 higher than pt2
+				norm = new Vector2(1.0f, 0.0f);
+			} else { //pt1 lower than pt 2
+				norm = new Vector2(-1.0f, 0.0f);
+			}
+		} else {
+			//tangent was a horizontal line
+			if(dist.y== 0.0f){
+				//look at control pts to find out if we need to add or subtract from vector
+				if(controlPt1.x > controlPt2.x){ //pt2 to the left of point 1
+					norm = new Vector2(0.0f, -1.0f);
+				} else { //pt2 to the right of point 1
+					norm = new Vector2(0.0f, 1.0f);
+				}
+			//tangent was not a horizontal line or vertical line
+			} else {
+					norm = new Vector2(-(tangent.y-point.y),(tangent.x-point.x));
+				
+
+/*NONE OF THIS SHIT BELOW WORKED **/
+//				//find slope of tan
+//				float slope = (dist.y/dist.x) / 1.0f;
+//				
+//				//invert slope of tan
+//				float slopeinverted = (1.0f / slope);
+//				
+//				//negate inverted slope
+//				float slopeinvnegate = -1.0f * slopeinverted;
+//				
+//				//now have the normal's slope
+//				if(controlPt1.y > controlPt2.y){
+//					if(controlPt1.x > controlPt2.x){ //pt1 high and right of pt2
+//						norm = new Vector2(1.0f, point.clone().y - slopeinvnegate);
+//					} else { //pt1 high and left of pt2
+//						norm = new Vector2(-1.0f, point.clone().y - slopeinvnegate);
+//					}
+//				} else {
+//					if(controlPt1.x > controlPt2.x){ //pt1 low and right of pt2
+//						norm = new Vector2(1.0f, point.clone().y + slopeinvnegate);
+//					} else { //pt1 low and left of pt2
+//						norm = new Vector2(-1.0f, point.clone().y + slopeinvnegate);
+//					}
+//				}
+/*END OF THE SHIT THAT DIDN'T WORK**/
+			}
+		}
+
+		curveNormals.add(point.clone().add(norm.negate()));
+	}
     
     /**
      * @return The points on this cubic bezier
@@ -157,8 +266,8 @@ public class CubicBezier {
     	for(Vector2 p : curveNormals) returnList.add(p);
     	return returnList;
     }
-
+    
     public static void main(String[] args) {
-		CubicBezier cb = new CubicBezier(new Vector2(0,0), new Vector2(0,1), new Vector2(1,1), new Vector2(1,0), .5f);
+		CubicBezier cb = new CubicBezier(new Vector2(0,0), new Vector2(0,1), new Vector2(-1,1), new Vector2(-1,0), .25f);
 	}
 }
