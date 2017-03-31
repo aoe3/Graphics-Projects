@@ -273,6 +273,31 @@ public abstract class SplineCurve {
 	public static void build3DRevolution(SplineCurve crossSection, OBJMesh mesh, float scale, float sliceTolerance) {
 		//TODO A5
 		
+		//Determine the proper angle to divide each slice by
+		float maxAngleInRads;
+		
+		//If sliceTolerance is not perfect divisor of 360
+		if (((float)(Math.PI * 2.0f) % sliceTolerance) != 0.0f){
+			//subtract the reminder from sliceTolerance to find the perfect divisor
+			maxAngleInRads = (sliceTolerance - ((float)(Math.PI * 2.0f) % sliceTolerance));
+		
+		//sliceTolerance was perfect divisor of 360
+		} else {
+			//can use sliceTolerance
+			maxAngleInRads = sliceTolerance;
+		}
+		
+		//the total number of slices we will make
+		float numberSlices = ((float)(Math.PI * 2.0f) / maxAngleInRads);
+		float theta = maxAngleInRads;
+		
+		for(int i = 0; i < crossSection.getPoints().size()-1; i++){
+			//pick out point on spline
+			Vector2 splinePoint = crossSection.getPoints().get(i).clone();
+			
+			//plot that point in 3D space
+			Vector3 XYZPoint = new Vector3(splinePoint.x, 0.0f, splinePoint.y);
+		}
 	}
 }
 
