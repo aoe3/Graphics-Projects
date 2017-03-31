@@ -301,7 +301,6 @@ public abstract class SplineCurve {
 			
 			//plot that point in 3D space
 			Vector3 XYZPoint = new Vector3(splinePoint.x, 0.0f, splinePoint.y);
-//			mesh.positions.add(XYZPoint);
 
 			float zPos = splinePoint.y*scale;
 			float r = splinePoint.x*scale;
@@ -356,42 +355,44 @@ public abstract class SplineCurve {
 			face.normals[1] = (i+1)*numberSlices;
 			mesh.faces.add(face);
 		}
-		for (int j=0; j<numberSlices-1; j++) {
+		if (crossSection.isClosed()) {
+			for (int j=0; j<numberSlices-1; j++) {
+				face = new OBJFace(3, false, true);
+				face.positions[0] = (nLevels-1)*numberSlices + j;
+				face.positions[2] = (nLevels-1)*numberSlices + j+1;
+				face.positions[1] = j;
+				face.normals[0] = (nLevels-1)*numberSlices + j;
+				face.normals[2] = (nLevels-1)*numberSlices + j+1;
+				face.normals[1] = j;
+				mesh.faces.add(face);
+
+				face = new OBJFace(3, false, true);
+				face.positions[0] = j;
+				face.positions[2] = (nLevels-1)*numberSlices + j+1;
+				face.positions[1] = j+1;
+				face.normals[0] = j;
+				face.normals[2] = (nLevels-1)*numberSlices + j+1;
+				face.normals[1] = j+1;
+				mesh.faces.add(face);
+			}
 			face = new OBJFace(3, false, true);
-			face.positions[0] = (nLevels-1)*numberSlices + j;
-			face.positions[2] = (nLevels-1)*numberSlices + j+1;
-			face.positions[1] = j;
-			face.normals[0] = (nLevels-1)*numberSlices + j;
-			face.normals[2] = (nLevels-1)*numberSlices + j+1;
-			face.normals[1] = j;
+			face.positions[0] = (nLevels-1)*numberSlices + (numberSlices-1);
+			face.positions[2] = (nLevels-1)*numberSlices;
+			face.positions[1] = numberSlices-1;
+			face.normals[0] = (nLevels-1)*numberSlices + (numberSlices-1);
+			face.normals[2] = (nLevels-1)*numberSlices;
+			face.normals[1] = numberSlices-1;
 			mesh.faces.add(face);
 
 			face = new OBJFace(3, false, true);
-			face.positions[0] = j;
-			face.positions[2] = (nLevels-1)*numberSlices + j+1;
-			face.positions[1] = j+1;
-			face.normals[0] = j;
-			face.normals[2] = (nLevels-1)*numberSlices + j+1;
-			face.normals[1] = j+1;
+			face.positions[0] = numberSlices-1;
+			face.positions[2] = (nLevels-1)*numberSlices;
+			face.positions[1] = 0;
+			face.normals[0] = numberSlices-1;
+			face.normals[2] = (nLevels-1)*numberSlices;
+			face.normals[1] = 0;
 			mesh.faces.add(face);
 		}
-		face = new OBJFace(3, false, true);
-		face.positions[0] = (nLevels-1)*numberSlices + (numberSlices-1);
-		face.positions[2] = (nLevels-1)*numberSlices;
-		face.positions[1] = numberSlices-1;
-		face.normals[0] = (nLevels-1)*numberSlices + (numberSlices-1);
-		face.normals[2] = (nLevels-1)*numberSlices;
-		face.normals[1] = numberSlices-1;
-		mesh.faces.add(face);
-
-		face = new OBJFace(3, false, true);
-		face.positions[0] = numberSlices-1;
-		face.positions[2] = (nLevels-1)*numberSlices;
-		face.positions[1] = 0;
-		face.normals[0] = numberSlices-1;
-		face.normals[2] = (nLevels-1)*numberSlices;
-		face.normals[1] = 0;
-		mesh.faces.add(face);
 	}
 }
 
