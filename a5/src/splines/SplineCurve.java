@@ -297,70 +297,100 @@ public abstract class SplineCurve {
 		for(int i = 0; i < nLevels; i++){
 			//pick out point on spline
 			Vector2 splinePoint = crossSection.getPoints().get(i).clone();
+			Vector2 normal = crossSection.getNormals().get(i);
 			
 			//plot that point in 3D space
 			Vector3 XYZPoint = new Vector3(splinePoint.x, 0.0f, splinePoint.y);
 //			mesh.positions.add(XYZPoint);
 
-			float zPos = splinePoint.y;
-			float r = splinePoint.x;
+			float zPos = splinePoint.y*scale;
+			float r = splinePoint.x*scale;
+			float rN = normal.x;
 
 			for (int j=0; j<numberSlices; j++) {
 				float xPos = r*((float)Math.cos(j*theta));
 				float yPos = r*((float)Math.sin(j*theta));
 				mesh.positions.add(new Vector3(xPos, yPos, zPos));
+
+				float xNorm = rN*((float)Math.cos(j*theta));
+				float yNorm = rN*((float)Math.sin(j*theta));;
+				mesh.normals.add((new Vector3(xNorm, yNorm, normal.y)).normalize());
 			}
 		}
 		OBJFace face;
 		for(int i = 0; i < nLevels-1; i++){
 			for (int j=0; j<numberSlices-1; j++) {
-				face = new OBJFace(3, false, false);
+				face = new OBJFace(3, false, true);
 				face.positions[0] = i*numberSlices + j;
-				face.positions[1] = i*numberSlices + j+1;
-				face.positions[2] = (i+1)*numberSlices + j;
+				face.positions[2] = i*numberSlices + j+1;
+				face.positions[1] = (i+1)*numberSlices + j;
+				face.normals[0] = i*numberSlices + j;
+				face.normals[2] = i*numberSlices + j+1;
+				face.normals[1] = (i+1)*numberSlices + j;
 				mesh.faces.add(face);
 
-				face = new OBJFace(3, false, false);
+				face = new OBJFace(3, false, true);
 				face.positions[0] = (i+1)*numberSlices + j;
-				face.positions[1] = i*numberSlices + j+1;
-				face.positions[2] = (i+1)*numberSlices + j+1;
+				face.positions[2] = i*numberSlices + j+1;
+				face.positions[1] = (i+1)*numberSlices + j+1;
+				face.normals[0] = (i+1)*numberSlices + j;
+				face.normals[2] = i*numberSlices + j+1;
+				face.normals[1] = (i+1)*numberSlices + j+1;
 				mesh.faces.add(face);
 			}
-			face = new OBJFace(3, false, false);
+			face = new OBJFace(3, false, true);
 			face.positions[0] = i*numberSlices + (numberSlices-1);
-			face.positions[1] = i*numberSlices;
-			face.positions[2] = (i+1)*numberSlices + (numberSlices-1);
+			face.positions[2] = i*numberSlices;
+			face.positions[1] = (i+1)*numberSlices + (numberSlices-1);
+			face.normals[0] = i*numberSlices + (numberSlices-1);
+			face.normals[2] = i*numberSlices;
+			face.normals[1] = (i+1)*numberSlices + (numberSlices-1);
 			mesh.faces.add(face);
 
-			face = new OBJFace(3, false, false);
+			face = new OBJFace(3, false, true);
 			face.positions[0] = (i+1)*numberSlices + (numberSlices-1);
-			face.positions[1] = i*numberSlices;
-			face.positions[2] = (i+1)*numberSlices;
+			face.positions[2] = i*numberSlices;
+			face.positions[1] = (i+1)*numberSlices;
+			face.normals[0] = (i+1)*numberSlices + (numberSlices-1);
+			face.normals[2] = i*numberSlices;
+			face.normals[1] = (i+1)*numberSlices;
 			mesh.faces.add(face);
 		}
 		for (int j=0; j<numberSlices-1; j++) {
-			face = new OBJFace(3, false, false);
+			face = new OBJFace(3, false, true);
 			face.positions[0] = (nLevels-1)*numberSlices + j;
-			face.positions[1] = (nLevels-1)*numberSlices + j+1;
-			face.positions[2] = j;
+			face.positions[2] = (nLevels-1)*numberSlices + j+1;
+			face.positions[1] = j;
+			face.normals[0] = (nLevels-1)*numberSlices + j;
+			face.normals[2] = (nLevels-1)*numberSlices + j+1;
+			face.normals[1] = j;
 			mesh.faces.add(face);
 
-			face = new OBJFace(3, false, false);
+			face = new OBJFace(3, false, true);
 			face.positions[0] = j;
-			face.positions[1] = (nLevels-1)*numberSlices + j+1;
-			face.positions[2] = j+1;
+			face.positions[2] = (nLevels-1)*numberSlices + j+1;
+			face.positions[1] = j+1;
+			face.normals[0] = j;
+			face.normals[2] = (nLevels-1)*numberSlices + j+1;
+			face.normals[1] = j+1;
 			mesh.faces.add(face);
 		}
-		face = new OBJFace(3, false, false);
+		face = new OBJFace(3, false, true);
 		face.positions[0] = (nLevels-1)*numberSlices + (numberSlices-1);
-		face.positions[1] = (nLevels-1)*numberSlices;
-		face.positions[2] = numberSlices-1;
+		face.positions[2] = (nLevels-1)*numberSlices;
+		face.positions[1] = numberSlices-1;
+		face.normals[0] = (nLevels-1)*numberSlices + (numberSlices-1);
+		face.normals[2] = (nLevels-1)*numberSlices;
+		face.normals[1] = numberSlices-1;
 		mesh.faces.add(face);
 
-		face = new OBJFace(3, false, false);
+		face = new OBJFace(3, false, true);
 		face.positions[0] = numberSlices-1;
-		face.positions[1] = (nLevels-1)*numberSlices;
-		face.positions[2] = 0;
+		face.positions[2] = (nLevels-1)*numberSlices;
+		face.positions[1] = 0;
+		face.normals[0] = numberSlices-1;
+		face.normals[2] = (nLevels-1)*numberSlices;
+		face.normals[1] = 0;
 		mesh.faces.add(face);
 	}
 }
