@@ -277,9 +277,10 @@ public abstract class SplineCurve {
 		float maxAngleInRads;
 		
 		//If sliceTolerance is not perfect divisor of 360
-		if (((float)(Math.PI * 2.0f) % sliceTolerance) != 0.0f){
-			//subtract the reminder from sliceTolerance to find the perfect divisor
-			maxAngleInRads = (sliceTolerance - ((float)(Math.PI * 2.0f) % sliceTolerance));
+		float remainder = (float)(Math.PI * 2.0f) % sliceTolerance;
+		if (remainder != 0.0f){
+			//subtract the remainder from sliceTolerance to find the perfect divisor
+			maxAngleInRads = sliceTolerance - (sliceTolerance - remainder) / (float)Math.floor((float)Math.PI * 2.0f / sliceTolerance);
 		
 		//sliceTolerance was perfect divisor of 360
 		} else {
@@ -288,16 +289,79 @@ public abstract class SplineCurve {
 		}
 		
 		//the total number of slices we will make
-		float numberSlices = ((float)(Math.PI * 2.0f) / maxAngleInRads);
+		int numberSlices = (int)Math.floor((float)(Math.PI * 2.0f) / maxAngleInRads);
 		float theta = maxAngleInRads;
+
+		int nLevels = crossSection.getPoints().size();
 		
-		for(int i = 0; i < crossSection.getPoints().size()-1; i++){
+		for(int i = 0; i < nLevels; i++){
 			//pick out point on spline
 			Vector2 splinePoint = crossSection.getPoints().get(i).clone();
 			
 			//plot that point in 3D space
 			Vector3 XYZPoint = new Vector3(splinePoint.x, 0.0f, splinePoint.y);
+//			mesh.positions.add(XYZPoint);
+
+			float zPos = splinePoint.y;
+			float r = splinePoint.x;
+
+			for (int j=0; j<numberSlices; j++) {
+				float xPos = r*((float)Math.cos(j*theta));
+				float yPos = r*((float)Math.sin(j*theta));
+				mesh.positions.add(new Vector3(xPos, yPos, zPos));
+			}
 		}
+		OBJFace face;
+		for(int i = 0; i < nLevels-1; i++){
+			for (int j=0; j<numberSlices-1; j++) {
+				face = new OBJFace(3, false, false);
+				face.positions[0] = i*numberSlices + j;
+				face.positions[1] = i*numberSlices + j+1;
+				face.positions[2] = (i+1)*numberSlices + j;
+				mesh.faces.add(face);
+
+				face = new OBJFace(3, false, false);
+				face.positions[0] = (i+1)*numberSlices + j;
+				face.positions[1] = i*numberSlices + j+1;
+				face.positions[2] = (i+1)*numberSlices + j+1;
+				mesh.faces.add(face);
+			}
+			face = new OBJFace(3, false, false);
+			face.positions[0] = i*numberSlices + (numberSlices-1);
+			face.positions[1] = i*numberSlices;
+			face.positions[2] = (i+1)*numberSlices + (numberSlices-1);
+			mesh.faces.add(face);
+
+			face = new OBJFace(3, false, false);
+			face.positions[0] = (i+1)*numberSlices + (numberSlices-1);
+			face.positions[1] = i*numberSlices;
+			face.positions[2] = (i+1)*numberSlices;
+			mesh.faces.add(face);
+		}
+		for (int j=0; j<numberSlices-1; j++) {
+			face = new OBJFace(3, false, false);
+			face.positions[0] = (nLevels-1)*numberSlices + j;
+			face.positions[1] = (nLevels-1)*numberSlices + j+1;
+			face.positions[2] = j;
+			mesh.faces.add(face);
+
+			face = new OBJFace(3, false, false);
+			face.positions[0] = j;
+			face.positions[1] = (nLevels-1)*numberSlices + j+1;
+			face.positions[2] = j+1;
+			mesh.faces.add(face);
+		}
+		face = new OBJFace(3, false, false);
+		face.positions[0] = (nLevels-1)*numberSlices + (numberSlices-1);
+		face.positions[1] = (nLevels-1)*numberSlices;
+		face.positions[2] = numberSlices-1;
+		mesh.faces.add(face);
+
+		face = new OBJFace(3, false, false);
+		face.positions[0] = numberSlices-1;
+		face.positions[1] = (nLevels-1)*numberSlices;
+		face.positions[2] = 0;
+		mesh.faces.add(face);
 	}
 }
 
