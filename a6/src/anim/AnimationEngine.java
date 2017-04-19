@@ -190,19 +190,22 @@ public class AnimationEngine {
 			val.getSurroundingFrames(curFrame, pair);
 	
 			// get interpolation ratio
-			float ratio = getRatio(pair[0].frame, pair[1].frame, curFrame);
+			float t = getRatio(pair[0].frame, pair[1].frame, curFrame);
 			
 			//create translation matrix
 			Vector3 translation = new Vector3(currObjTransform.getTrans());
+
+			// interpolate translations linearly
+			Vector3 translationVector = new Vector3();
+			translationVector.lerp(translation, t);
+			Matrix4 translationMatrix = Matrix4.createTranslation(translationVector);
 			
 			Quat q1 = new Quat();
 			Quat q2 = new Quat();
 			
 			q1.set(pair[0].transformation);
 			q2.set(pair[1].transformation);
-			
-			// interpolate translations linearly
-	
+
 			// polar decompose axis matrices
 			
 			//get RS out of the transformation matrix
@@ -211,16 +214,55 @@ public class AnimationEngine {
 			//create empty matrixes for decomp into R and S
 			Matrix3 rotationMatrix = new Matrix3();
 			Matrix3 symmetricMatrix = new Matrix3();
-			
-			//decomp RS into R and S
+
 			matrixRS.polar_decomp(rotationMatrix, symmetricMatrix);
-			Vector3 eulerAngles = eulerDecomp(rotationMatrix);
-	
+
+			// interpolate scale linearly
+			Matrix3 s = new Matrix3();
+			s.interpolate(s, symmetricMatrix, t);
+
+			Matrix3 r = new Matrix3();
+			Quat q;
 			// interpolate rotation matrix (3 modes of interpolation) and linearly interpolate scales
+			switch(this.rotationMode) {
+				case EULER:
+					//decomp RS into R and S
+					Vector3 eulerAngles = eulerDecomp(rotationMatrix);
+
+					Vector3 v = new Vector3();
+					v.lerp(eulerAngles, t);
+
+					Matrix3 rx = new Matrix3();
+					Matrix3 ry = new Matrix3();
+					Matrix3 rz = new Matrix3();
+
+					Matrix3.createRotationX(v.x, rx);
+					Matrix3.createRotationY(v.y, ry);
+					Matrix3.createRotationZ(v.z, rz);
+
+					rx.mulBefore(ry.mulBefore(rz), r);
+
+				case QUAT_LERP:
+					// interpolate rotation linearly
+					q = q1.scale(1-t).add(q2.scale(t));
+					q.normalize();
+					r = q.toRotationMatrix(r);
+
+				case QUAT_SLERP:
+					q = new Quat();
+					q.slerp(q1, q2, t);
+					q.normalize();
+					r = q.toRotationMatrix(r);
+				default:
+					break;
+			}
 	
 			// combine interpolated R,S,and T
-			
-			
+			Matrix3 rs = new Matrix3();
+			r.mulBefore(s, rs);
+			Matrix4 rs4 = new Matrix4(rs);
+			Matrix4 m = new Matrix4();
+			translationMatrix.mulBefore(rs4, m);
 			
 			this.scene.sendEvent(new SceneTransformationEvent(currObj));
 			//do something
