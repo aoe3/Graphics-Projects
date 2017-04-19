@@ -1,0 +1,28 @@
+f(t) = at^5 + bt^4 + ct^3 + dt^2 + et + f
+f'(t) = 5at^4 + 4bt^3 + 3ct^2 + 2dt + e
+f''(t) = 20at^3 + 12bt^2 + 6ct + 2d
+
+f(0) = f
+f(1) = a + b + c + d + e + f
+f'(0) = e
+f'(1) = 5a + 4b + 3c + 2d + e
+f''(0) = 2d
+f''(1) = 20a + 12b + 6c + 2d
+
+Solve for a,b,c,d,e,f
+
+f(0) = p0
+f(1) = p3
+f'(0) = 3(p1-p0)
+f'(1) = 3(p3-p2)
+f''(0) = 4(p4-p0)
+f''(1) = 4(p5-p3)
+
+[1 0 0 0 0 0
+ 0 0 0 1 0 0
+-3 3 0 0 0 0
+ 0 0-3 3 0 0
+-4 0 0 0 4 0
+ 0 0 0-4 0 4] * abcdef Matrix = abcdef
+
+f(t) = uM * Mcalc * pM
