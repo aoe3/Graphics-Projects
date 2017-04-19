@@ -179,20 +179,52 @@ public class AnimationEngine {
 		// Loop Through All The Timelines
 		// And Update Transformations Accordingly
 		// (You WILL Need To Use this.scene)
-
-		// get pair of surrounding frames
-		// (function in AnimTimeline)
-
-		// get interpolation ratio
-
-		// interpolate translations linearly
-
-		// polar decompose axis matrices
-
-    // interpolate rotation matrix (3 modes of interpolation) and linearly interpolate scales
-
-		// combine interpolated R,S,and T
-		
+		for (HashMap.Entry<String, AnimTimeline> entry : this.timelines.entrySet()){
+			AnimTimeline val = entry.getValue();
+			SceneObject currObj = val.object;
+			Matrix4 currObjTransform = currObj.transformation.clone();
+			
+			// get pair of surrounding frames
+			// (function in AnimTimeline)
+			AnimKeyframe[] pair = new AnimKeyframe[2];
+			val.getSurroundingFrames(curFrame, pair);
+	
+			// get interpolation ratio
+			float ratio = getRatio(pair[0].frame, pair[1].frame, curFrame);
+			
+			//create translation matrix
+			Vector3 translation = new Vector3(currObjTransform.getTrans());
+			
+			Quat q1 = new Quat();
+			Quat q2 = new Quat();
+			
+			q1.set(pair[0].transformation);
+			q2.set(pair[1].transformation);
+			
+			// interpolate translations linearly
+	
+			// polar decompose axis matrices
+			
+			//get RS out of the transformation matrix
+			Matrix3 matrixRS = currObjTransform.getAxes();
+			
+			//create empty matrixes for decomp into R and S
+			Matrix3 rotationMatrix = new Matrix3();
+			Matrix3 symmetricMatrix = new Matrix3();
+			
+			//decomp RS into R and S
+			matrixRS.polar_decomp(rotationMatrix, symmetricMatrix);
+			Vector3 eulerAngles = eulerDecomp(rotationMatrix);
+	
+			// interpolate rotation matrix (3 modes of interpolation) and linearly interpolate scales
+	
+			// combine interpolated R,S,and T
+			
+			
+			
+			this.scene.sendEvent(new SceneTransformationEvent(currObj));
+			//do something
+		}
 	}
 
 	public static float getRatio(int min, int max, int cur) {
