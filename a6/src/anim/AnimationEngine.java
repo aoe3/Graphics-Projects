@@ -182,24 +182,32 @@ public class AnimationEngine {
 		for (HashMap.Entry<String, AnimTimeline> entry : this.timelines.entrySet()){
 			AnimTimeline val = entry.getValue();
 			SceneObject currObj = val.object;
-			Matrix4 currObjTransform = currObj.transformation.clone();
-			
+
 			// get pair of surrounding frames
 			// (function in AnimTimeline)
 			AnimKeyframe[] pair = new AnimKeyframe[2];
 			val.getSurroundingFrames(curFrame, pair);
-	
+			System.out.println(pair[0].frame);
+			System.out.println(pair[1].frame);
+
+
+			Matrix4 lastObjTransform = pair[0].transformation.clone();
+			Matrix4 nextObjTransform = pair[1].transformation.clone();
+
 			// get interpolation ratio
 			float t = getRatio(pair[0].frame, pair[1].frame, curFrame);
+			if (t==0) { t=1; };
 			
 			//create translation matrix
-			Vector3 translation = new Vector3(currObjTransform.getTrans());
+			Vector3 lastTranslation = new Vector3(lastObjTransform.getTrans());
+			Vector3 nextTranslation = new Vector3(nextObjTransform.getTrans());
 
 			// interpolate translations linearly
-			Vector3 translationVector = new Vector3();
-			translationVector.lerp(translation, t);
+			Vector3 translationVector = lastTranslation;
+			translationVector.lerp(nextTranslation, t);
 			Matrix4 translationMatrix = Matrix4.createTranslation(translationVector);
-			
+//			System.out.println("T" + t);
+
 			Quat q1 = new Quat();
 			Quat q2 = new Quat();
 			
@@ -209,17 +217,21 @@ public class AnimationEngine {
 			// polar decompose axis matrices
 			
 			//get RS out of the transformation matrix
-			Matrix3 matrixRS = currObjTransform.getAxes();
-			
-			//create empty matrixes for decomp into R and S
-			Matrix3 rotationMatrix = new Matrix3();
-			Matrix3 symmetricMatrix = new Matrix3();
+			Matrix3 lastMatrixRS = lastObjTransform.getAxes();
+			Matrix3 nextMatrixRS = nextObjTransform.getAxes();
 
-			matrixRS.polar_decomp(rotationMatrix, symmetricMatrix);
+			//create empty matrixes for decomp into R and S
+			Matrix3 lastRotationMatrix = new Matrix3();
+			Matrix3 nextRotationMatrix = new Matrix3();
+			Matrix3 lastSymmetricMatrix = new Matrix3();
+			Matrix3 nextSymmetricMatrix = new Matrix3();
+
+			lastMatrixRS.polar_decomp(lastRotationMatrix, lastSymmetricMatrix);
+			nextMatrixRS.polar_decomp(nextRotationMatrix, nextSymmetricMatrix);
 
 			// interpolate scale linearly
-			Matrix3 s = new Matrix3();
-			s.interpolate(s, symmetricMatrix, t);
+			Matrix3 s = lastSymmetricMatrix.clone();
+			s.interpolate(s, nextSymmetricMatrix, t);
 
 			Matrix3 r = new Matrix3();
 			Quat q;
@@ -227,10 +239,11 @@ public class AnimationEngine {
 			switch(this.rotationMode) {
 				case EULER:
 					//decomp RS into R and S
-					Vector3 eulerAngles = eulerDecomp(rotationMatrix);
+					Vector3 lastEulerAngles = eulerDecomp(lastRotationMatrix);
+					Vector3 nextEulerAngles = eulerDecomp(nextRotationMatrix);
 
-					Vector3 v = new Vector3();
-					v.lerp(eulerAngles, t);
+					Vector3 v = lastEulerAngles.clone();
+					v.lerp(nextEulerAngles, t);
 
 					Matrix3 rx = new Matrix3();
 					Matrix3 ry = new Matrix3();
@@ -241,18 +254,20 @@ public class AnimationEngine {
 					Matrix3.createRotationZ(v.z, rz);
 
 					rx.mulBefore(ry.mulBefore(rz), r);
+					break;
 
 				case QUAT_LERP:
 					// interpolate rotation linearly
 					q = q1.scale(1-t).add(q2.scale(t));
 					q.normalize();
 					r = q.toRotationMatrix(r);
+					break;
 
 				case QUAT_SLERP:
-					q = new Quat();
-					q.slerp(q1, q2, t);
+					q = Quat.slerp(q1, q2, t);
 					q.normalize();
 					r = q.toRotationMatrix(r);
+					break;
 				default:
 					break;
 			}
@@ -263,9 +278,9 @@ public class AnimationEngine {
 			Matrix4 rs4 = new Matrix4(rs);
 			Matrix4 m = new Matrix4();
 			translationMatrix.mulBefore(rs4, m);
-			
+
+			currObj.transformation.set(m);
 			this.scene.sendEvent(new SceneTransformationEvent(currObj));
-			//do something
 		}
 	}
 
