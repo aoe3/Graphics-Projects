@@ -380,8 +380,8 @@ public class Quat extends AbstractList<Float> implements Cloneable {
             if (cosTheta > 1) cosTheta = 1;
             
             float theta = (float) Math.acos(cosTheta);
-            
-            Quat q = new Quat();
+
+			Quat q = new Quat();
             if (theta < 0.01f)
             {
               q.set(q1);

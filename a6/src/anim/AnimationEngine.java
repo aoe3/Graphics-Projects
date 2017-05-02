@@ -187,9 +187,6 @@ public class AnimationEngine {
 			// (function in AnimTimeline)
 			AnimKeyframe[] pair = new AnimKeyframe[2];
 			val.getSurroundingFrames(curFrame, pair);
-			System.out.println(pair[0].frame);
-			System.out.println(pair[1].frame);
-
 
 			Matrix4 lastObjTransform = pair[0].transformation.clone();
 			Matrix4 nextObjTransform = pair[1].transformation.clone();
@@ -206,16 +203,7 @@ public class AnimationEngine {
 			Vector3 translationVector = lastTranslation;
 			translationVector.lerp(nextTranslation, t);
 			Matrix4 translationMatrix = Matrix4.createTranslation(translationVector);
-//			System.out.println("T" + t);
 
-			Quat q1 = new Quat();
-			Quat q2 = new Quat();
-			
-			q1.set(pair[0].transformation);
-			q2.set(pair[1].transformation);
-
-			// polar decompose axis matrices
-			
 			//get RS out of the transformation matrix
 			Matrix3 lastMatrixRS = lastObjTransform.getAxes();
 			Matrix3 nextMatrixRS = nextObjTransform.getAxes();
@@ -226,6 +214,7 @@ public class AnimationEngine {
 			Matrix3 lastSymmetricMatrix = new Matrix3();
 			Matrix3 nextSymmetricMatrix = new Matrix3();
 
+			// polar decompose axis matrices
 			lastMatrixRS.polar_decomp(lastRotationMatrix, lastSymmetricMatrix);
 			nextMatrixRS.polar_decomp(nextRotationMatrix, nextSymmetricMatrix);
 
@@ -233,8 +222,15 @@ public class AnimationEngine {
 			Matrix3 s = lastSymmetricMatrix.clone();
 			s.interpolate(s, nextSymmetricMatrix, t);
 
+			Quat q1 = new Quat();
+			Quat q2 = new Quat();
+
+			q1.set(lastRotationMatrix);
+			q2.set(nextRotationMatrix);
+
 			Matrix3 r = new Matrix3();
 			Quat q;
+
 			// interpolate rotation matrix (3 modes of interpolation) and linearly interpolate scales
 			switch(this.rotationMode) {
 				case EULER:
