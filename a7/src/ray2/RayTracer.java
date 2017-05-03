@@ -341,7 +341,7 @@ public class RayTracer {
 						
 					}
 				}
-				
+				pixelColor.mul(exposure);
 				outImage.setPixelColor(pixelColor, x, y);
 
 			}
