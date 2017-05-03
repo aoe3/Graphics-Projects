@@ -50,9 +50,9 @@ public class RectangleLight extends Light {
 		// 1) Set the 3 basis vectors in the orthonormal basis, 
         //    based on normalDir and upDir
         // 2) Set up the helper variables if needed
-		w.set(normalDir).negate().normalize();
-		u.set(upDir).cross(w).normalize();
-		v.set(w).cross(u).normalize();
+//		w.set(normalDir).negate().normalize();
+//		u.set(upDir).cross(w).normalize();
+//		v.set(w).cross(u).normalize();
 	}
 
 	/**
