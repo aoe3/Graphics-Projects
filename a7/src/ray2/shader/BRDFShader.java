@@ -55,21 +55,43 @@ public abstract class BRDFShader extends Shader {
 			//	  See Shader.java for a useful shadowing function.
 			if (!isShadowed(scene, lRec, iRec, ray)) {
 				// 4) Evaluate the BRDF using the abstract evalBRDF method.
-				Vector3d L = lRec.direction.clone().normalize();
-				Ray VRay = new Ray();
-				scene.getCamera().getRay(VRay, iRec.location.x, iRec.location.y);
-				Vector3d V = VRay.direction.clone().normalize();
+				
+				// object  ------> camera
+				// camera minus object
+				Vector3d V = ray.origin.clone().sub(iRec.location.clone()).normalize();
+				
+				// normal of the intersect point
+				Vector3d N = iRec.normal.clone().normalize();
+				
+				// object  ------> light
+				// light minus object
+				Ray lRay = new Ray();
+				
+				// create ray from camera towards the object
+				scene.getCamera().getRay(lRay, iRec.location.x, iRec.location.y);
+				
+				// need ray going in opposite direction
+				Vector3d L = lRay.direction.clone().negate().normalize();
+				
+				// dummy color for evalBRDF
 				Colord BRDFval = new Colord();
+				
+				// find kD for evalBRDF
 				Colord kD;
 				if (texture == null) {
 					kD = diffuseColor;
 				} else {
-					kD = texture.getTexColor(new Vector2d(iRec.location.x, iRec.location.y));
+					// appended from A2
+					kD = texture.getTexColor(iRec.texCoords);
 				}
-				evalBRDF(L, V, iRec.normal, kD, BRDFval);
+				
+				// populate dummy color
+				evalBRDF(L, V, N, kD, BRDFval);
+				
 				// 5) Compute the final color using the BRDF value and the information in the
 				//    light sampling record.
-				outIntensity.add(BRDFval.div(lRec.probability));
+				outIntensity.add(l.intensity.mul(BRDFval).mul(L.dot(N)).mul(lRec.attenuation).div(lRec.distance * lRec.distance)).div(lRec.probability);
+				
 			}
 		}
 	}
