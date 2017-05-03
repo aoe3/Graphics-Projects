@@ -73,15 +73,15 @@ public class RectangleLight extends Light {
 	public void sample(LightSamplingRecord lRec, Vector3d shadingPoint) {
 		// TODO#A7: Fill in this function
 		// 1. sample light source point on the rectangle area light in uniform-random fashion
-		Random r = new Random();
-		double x = r.nextDouble()*width;
-		double y = r.nextDouble()*height;
-		Vector2d samplePoint = new Vector2d(x,y);
-		// 2. compute the l vector, i.e. the direction the light incidents on the shading point
-		Vector3d l =
-		// 3. compute the distance between light point and shading point, and get attenuation
-		// 4. compute the probablity this light point is sampled, which is used for Monte-Carlo integration
-		// 5. write relevant info to LightSamplingRecord object
+//		Random r = new Random();
+//		double x = r.nextDouble()*width;
+//		double y = r.nextDouble()*height;
+//		Vector2d samplePoint = position.clone().add();
+//		// 2. compute the l vector, i.e. the direction the light incidents on the shading point
+//		Vector3d l =
+//		// 3. compute the distance between light point and shading point, and get attenuation
+//		// 4. compute the probablity this light point is sampled, which is used for Monte-Carlo integration
+//		// 5. write relevant info to LightSamplingRecord object
 	}
 
 	/**
