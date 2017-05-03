@@ -5,6 +5,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
+import com.sun.glass.ui.Pixels;
+
 import ray2.camera.Camera;
 import ray2.shader.Shader;
 import ray2.viewer.QuickViewer;
@@ -328,22 +330,21 @@ public class RayTracer {
 
 				// TODO#A7 Implement supersampling for antialiasing.
 				// Each pixel should have (samples*samples) subpixels.
-				double lowerbound = -1.0*(samples-1/2);
-				double upperbound = (samples-1/2);
+				double lowerbound = -1.0 * ((samples-1)/2);
+				double upperbound = ((samples-1)/2);
 				
-				for (double dx = lowerbound; dx < upperbound; dx += sInv){
-					for (double dy = lowerbound; dy < upperbound; dy += sInv){
-						double outX = (x + dx) * sInv;
-						double outY = (y + dy) * sInv;
-						Ray outRay = new Ray();
-						scene.camera.getRay(outRay, outX, outY);
-						pixelColor.add(outRay.direction);
-						
+				for (double dx = lowerbound; dx <= upperbound; dx ++){
+					for (double dy = lowerbound; dy <= upperbound; dy ++){
+						double outX = x + dx / samples;
+						double outY = y + dy / samples;
+						cam.getRay(ray, outX, outY);
+						shadeRay(rayColor, scene, ray, 1);
+						pixelColor.add(rayColor);
 					}
 				}
+				pixelColor.div(samples*samples);
 				pixelColor.mul(exposure);
 				outImage.setPixelColor(pixelColor, x, y);
-
 			}
 		}
 	}
