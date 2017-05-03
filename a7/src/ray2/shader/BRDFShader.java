@@ -1,5 +1,6 @@
 package ray2.shader;
 
+import egl.math.Vector2d;
 import ray2.IntersectionRecord;
 import ray2.Ray;
 import ray2.Scene;
@@ -47,8 +48,8 @@ public abstract class BRDFShader extends Shader {
 		// 1) Loop through each light in the scene.
 		for (Light l : scene.getLights()) {
 			// 3) Use Light.sample() to generate a direction toward the light.
-			LightSamplingRecord lRec = new LightSamplingRecord(l);
-			Light.sample(lRec, iRec.location)
+			LightSamplingRecord lRec = new LightSamplingRecord();
+			l.sample(lRec, iRec.location);
 
 			// 2) If the intersection point is shadowed, skip the calculation for the light.
 			//	  See Shader.java for a useful shadowing function.
@@ -57,14 +58,19 @@ public abstract class BRDFShader extends Shader {
 				Vector3d L = lRec.direction.clone().normalize();
 				Ray VRay = new Ray();
 				scene.getCamera().getRay(VRay, iRec.location.x, iRec.location.y);
-				Vector3d V = VRay.direction.normalize();
-				evalBRDF(, );
+				Vector3d V = VRay.direction.clone().normalize();
+				Colord BRDFval = new Colord();
+				Colord kD;
+				if (texture == null) {
+					kD = diffuseColor;
+				} else {
+					kD = texture.getTexColor(new Vector2d(iRec.location.x, iRec.location.y));
+				}
+				evalBRDF(L, V, iRec.normal, kD, BRDFval);
+				// 5) Compute the final color using the BRDF value and the information in the
+				//    light sampling record.
+				outIntensity.add(BRDFval.div(lRec.probability));
 			}
 		}
-
-		// 5) Compute the final color using the BRDF value and the information in the
-		//    light sampling record.
-		
 	}
-
 }
