@@ -1,14 +1,11 @@
 package ray2.shader;
 
-import egl.math.Vector2d;
+import egl.math.*;
 import ray2.IntersectionRecord;
 import ray2.Ray;
 import ray2.Scene;
 import ray2.light.Light;
 import ray2.light.LightSamplingRecord;
-import egl.math.Color;
-import egl.math.Colord;
-import egl.math.Vector3d;
 
 public abstract class BRDFShader extends Shader {
 
@@ -66,10 +63,11 @@ public abstract class BRDFShader extends Shader {
 				} else {
 					kD = texture.getTexColor(new Vector2d(iRec.location.x, iRec.location.y));
 				}
+				Vector3d N = iRec.normal;
 				evalBRDF(L, V, iRec.normal, kD, BRDFval);
 				// 5) Compute the final color using the BRDF value and the information in the
 				//    light sampling record.
-				outIntensity.add(BRDFval.div(lRec.probability));
+				outIntensity.add(BRDFval.clone().mul(l.intensity).mul(L.clone().dot(N)).mul(lRec.attenuation).div(lRec.probability));
 			}
 		}
 	}

@@ -40,7 +40,9 @@ public class RectangleLight extends Light {
 	 * TODO#A7: declare necessary variables 
 	 * e.g. the orthonormal basis vectors for the rect area light
 	 */
-	Vector3d u, v, w;
+	Vector3d u = new Vector3d();
+	Vector3d v = new Vector3d();
+	Vector3d w = new Vector3d();
 
 	/**
 	 * Initialize the derived view variables to prepare for using the camera.
@@ -50,9 +52,9 @@ public class RectangleLight extends Light {
 		// 1) Set the 3 basis vectors in the orthonormal basis, 
         //    based on normalDir and upDir
         // 2) Set up the helper variables if needed
-//		w.set(normalDir).negate().normalize();
-//		u.set(upDir).cross(w).normalize();
-//		v.set(w).cross(u).normalize();
+		w.set(normalDir).negate().normalize();
+		u.set(upDir).cross(w).normalize();
+		v.set(w).cross(u).normalize();
 	}
 
 	/**
@@ -73,15 +75,23 @@ public class RectangleLight extends Light {
 	public void sample(LightSamplingRecord lRec, Vector3d shadingPoint) {
 		// TODO#A7: Fill in this function
 		// 1. sample light source point on the rectangle area light in uniform-random fashion
-//		Random r = new Random();
-//		double x = r.nextDouble()*width;
-//		double y = r.nextDouble()*height;
-//		Vector2d samplePoint = position.clone().add();
-//		// 2. compute the l vector, i.e. the direction the light incidents on the shading point
-//		Vector3d l =
-//		// 3. compute the distance between light point and shading point, and get attenuation
-//		// 4. compute the probablity this light point is sampled, which is used for Monte-Carlo integration
-//		// 5. write relevant info to LightSamplingRecord object
+		Random r = new Random();
+		double x = r.nextDouble()*width;
+		double y = r.nextDouble()*height;
+		float theta = (float)Math.acos((new Vector2d(1,0)).len() / u.len());
+		Vector3d samplePoint = position.clone().add(x,y,0);
+		// 2. compute the l vector, i.e. the direction the light incidents on the shading point
+		Vector3d l = shadingPoint.clone().sub(samplePoint);
+		// 3. compute the distance between light point and shading point, and get attenuation
+		float dist = (float)l.clone().len();
+		float atten = 1.0f / (float)shadingPoint.distSq(this.position);
+		// 4. compute the probablity this light point is sampled, which is used for Monte-Carlo integration
+		float probability = 1f;
+		// 5. write relevant info to LightSamplingRecord object
+		lRec.direction.set(l);
+		lRec.distance = dist;
+		lRec.attenuation = atten;
+		lRec.probability = probability;
 	}
 
 	/**
