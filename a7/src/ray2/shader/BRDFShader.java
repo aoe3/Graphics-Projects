@@ -50,32 +50,24 @@ public abstract class BRDFShader extends Shader {
 			// 3) Use Light.sample() to generate a direction toward the light.
 			LightSamplingRecord lRec = new LightSamplingRecord();
 			l.sample(lRec, iRec.location);
-
+			
 			// 2) If the intersection point is shadowed, skip the calculation for the light.
 			//	  See Shader.java for a useful shadowing function.
-			if (!isShadowed(scene, lRec, iRec, ray)) {
+			
+			if (!this.isShadowed(scene, lRec, iRec, ray)) {
 				// 4) Evaluate the BRDF using the abstract evalBRDF method.
+				// L a unit vector toward the light
+				Vector3d L = lRec.direction.clone().normalize();
 				
-				// object  ------> camera
-				// camera minus object
-				Vector3d V = ray.origin.clone().sub(iRec.location.clone()).normalize();
 				
 				// normal of the intersect point
 				Vector3d N = iRec.normal.clone().normalize();
 				
-				// object  ------> light
-				// light minus object
-				Ray lRay = new Ray();
-				
-				// create ray from camera towards the object
-				scene.getCamera().getRay(lRay, iRec.location.x, iRec.location.y);
-				
-				// need ray going in opposite direction
-				Vector3d L = lRay.direction.clone().negate().normalize();
+				// V a unit vector toward the viewer
+				Vector3d V = ray.direction.negate().normalize();
 				
 				// dummy color for evalBRDF
 				Colord BRDFval = new Colord();
-				
 				// find kD for evalBRDF
 				Colord kD;
 				if (texture == null) {
@@ -87,11 +79,9 @@ public abstract class BRDFShader extends Shader {
 				
 				// populate dummy color
 				evalBRDF(L, V, N, kD, BRDFval);
-				
 				// 5) Compute the final color using the BRDF value and the information in the
 				//    light sampling record.
-				outIntensity.add(l.intensity.mul(BRDFval).mul(L.dot(N)).mul(lRec.attenuation).div(lRec.distance * lRec.distance)).div(lRec.probability);
-				
+				outIntensity.add(BRDFval.mul(l.intensity).mul(L.dot(N)).mul(lRec.attenuation).div(lRec.probability));
 			}
 		}
 	}
