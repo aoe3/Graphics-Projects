@@ -305,7 +305,6 @@ public class RayTracer {
 	 */
 	public static void renderBlock(Scene scene, Image outImage, int offsetX, int offsetY, int sizeX, int sizeY) {
 
-
 		// Do some basic setup
 		Ray ray = new Ray();
 		Colord pixelColor = new Colord();
@@ -322,6 +321,7 @@ public class RayTracer {
 		double exposure = scene.getExposure();
 
 		Camera cam = scene.getCamera();
+		
 
 		for(int x = offsetX; x < (offsetX + sizeX); x++) {
 			for(int y = offsetY; y < (offsetY + sizeY); y++) {
@@ -334,9 +334,13 @@ public class RayTracer {
 				
 				for (double dx = 0; dx < samples; dx ++){
 					for (double dy = 0; dy < samples; dy ++){
-						double outX = x + dx / samples;
-						double outY = y + dy / samples;
-						cam.getRay(ray, outX, outY);
+						double outX = (double)x + dx / (double)samples;
+						double outY = (double)y + dy / (double)samples;
+						double inX = outX/(double)width;
+						double inY = outY/(double)height;
+//						System.out.println(inX);
+//						System.out.println(inY);
+						cam.getRay(ray, inX, inY);
 						shadeRay(rayColor, scene, ray, 1);
 						pixelColor.add(rayColor);
 						counter++;
