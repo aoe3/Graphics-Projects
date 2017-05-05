@@ -50,8 +50,7 @@ public abstract class BRDFShader extends Shader {
 			
 			// 2) If the intersection point is shadowed, skip the calculation for the light.
 			//	  See Shader.java for a useful shadowing function.
-			
-			if (!isShadowed(scene, lRec, iRec, ray)) {
+			if (!isShadowed(scene, lRec, iRec, new Ray())) {
 				// 4) Evaluate the BRDF using the abstract evalBRDF method.
 				// L a unit vector toward the light
 				Vector3d L = lRec.direction.clone().normalize();
