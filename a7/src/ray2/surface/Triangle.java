@@ -137,7 +137,46 @@ public class Triangle extends Surface {
 	public void computeBoundingBox() {
 		// TODO#A7: Compute the bounding box and store the result in
 		// averagePosition, minBound, and maxBound.
-		
+		Vector3d v0 = new Vector3d(owner.getMesh().getPosition(face,0));
+		Vector3d v1 = new Vector3d(owner.getMesh().getPosition(face,1));
+		Vector3d v2 = new Vector3d(owner.getMesh().getPosition(face,2));
+
+		Vector3d pt1 = v0;
+		Vector3d pt2 = v1;
+		Vector3d pt3 = new Vector3d(v0.x, v0.y, v2.z);
+		Vector3d pt4 = new Vector3d(v1.x, v1.y, v2.z);
+		Vector3d pt5 = new Vector3d(v0.x, v2.y, v0.z);
+		Vector3d pt6 = new Vector3d(v1.x, v2.y, v0.z);
+		Vector3d pt7 = new Vector3d(v0.x, v2.y, v2.z);
+		Vector3d pt8 = new Vector3d(v1.x, v2.y, v2.z);
+
+		Vector3d centerPt = new Vector3d((v0.x+v1.x+v2.x)/3.0, (v0.y+v1.y+v2.y)/3.0, (v0.z+v1.z+v2.z)/3.0);
+
+		Vector3d[] points = new Vector3d[8];
+		points[0] = tMat.mulPos(pt1);
+		points[1] = tMat.mulPos(pt2);
+		points[2] = tMat.mulPos(pt3);
+		points[3] = tMat.mulPos(pt4);
+		points[4] = tMat.mulPos(pt5);
+		points[5] = tMat.mulPos(pt6);
+		points[6] = tMat.mulPos(pt7);
+		points[7] = tMat.mulPos(pt8);
+
+		averagePosition = tMat.mulPos(centerPt);
+
+		Vector3d minBound = new Vector3d();
+		Vector3d maxBound = new Vector3d();
+
+		for (int i=0; i<8; i++) {
+			minBound.x = Math.min(points[i].x, minBound.x);
+			maxBound.x = Math.max(points[i].x, maxBound.x);
+
+			minBound.y = Math.min(points[i].y, minBound.y);
+			maxBound.y = Math.max(points[i].y, maxBound.y);
+
+			minBound.z = Math.min(points[i].z, minBound.z);
+			maxBound.z = Math.max(points[i].z, maxBound.z);
+		}
 	}
 
 	/**

@@ -84,7 +84,34 @@ public class BvhNode {
 	 */
 	public boolean intersects(Ray ray) {
 		// TODO#A7: fill in this function.
+		float txMin = (float)((minBound.x - ray.origin.x) / ray.direction.x);
+		float tyMin = (float)((minBound.y - ray.origin.y) / ray.direction.y);
+		float tzMin = (float)((minBound.z - ray.origin.z) / ray.direction.z);
 
-		return false;
+		float txMax = (float)((maxBound.x - ray.origin.x) / ray.direction.x);
+		float tyMax = (float)((maxBound.y - ray.origin.y) / ray.direction.y);
+		float tzMax = (float)((maxBound.z - ray.origin.z) / ray.direction.z);
+
+		float txEnter = Math.min(txMin, txMax);
+		float txExit = Math.max(txMin, txMax);
+
+		float tyEnter = Math.min(tyMin, tyMax);
+		float tyExit = Math.max(tyMin, tyMax);
+
+		if (txEnter > tyExit || txExit < tyEnter) {
+			return false;
+		}
+
+		float tEnter = Math.max(Math.max(txEnter, tyEnter), txEnter);
+		float tExit = Math.min(Math.min(txExit, tyExit), txExit);
+
+		float tzEnter = Math.min(tzMin, tzMax);
+		float tzExit = Math.max(tzMin, tzMax);
+
+		if (tEnter > tzExit || tExit < tzEnter) {
+			return false;
+		}
+
+		return true;
 	}
 }

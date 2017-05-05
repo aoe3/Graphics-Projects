@@ -47,27 +47,43 @@ public abstract class BRDFShader extends Shader {
 			// 3) Use Light.sample() to generate a direction toward the light.
 			LightSamplingRecord lRec = new LightSamplingRecord();
 			l.sample(lRec, iRec.location);
-
+			
 			// 2) If the intersection point is shadowed, skip the calculation for the light.
 			//	  See Shader.java for a useful shadowing function.
+			
 			if (!isShadowed(scene, lRec, iRec, ray)) {
 				// 4) Evaluate the BRDF using the abstract evalBRDF method.
+				// L a unit vector toward the light
 				Vector3d L = lRec.direction.clone().normalize();
-				Ray VRay = new Ray();
-				scene.getCamera().getRay(VRay, iRec.location.x, iRec.location.y);
-				Vector3d V = VRay.direction.clone().normalize();
+				
+				
+				// normal of the intersect point
+				Vector3d N = iRec.normal.clone().normalize();
+				
+				// V a unit vector toward the viewer
+				Vector3d V = ray.direction.clone().negate().normalize();
+				
+				// dummy color for evalBRDF
 				Colord BRDFval = new Colord();
+				// find kD for evalBRDF
 				Colord kD;
 				if (texture == null) {
 					kD = diffuseColor;
 				} else {
-					kD = texture.getTexColor(new Vector2d(iRec.location.x, iRec.location.y));
+					// appended from A2
+					kD = this.texture.getTexColor(iRec.texCoords);
 				}
-				Vector3d N = iRec.normal;
-				evalBRDF(L, V, iRec.normal, kD, BRDFval);
+//				Vector3d N = iRec.normal;
+//				evalBRDF(L, V, iRec.normal, kD, BRDFval);
+//				// 5) Compute the final color using the BRDF value and the information in the
+//				//    light sampling record.
+				outIntensity.add(BRDFval.clone().mul(l.intensity).mul(L.clone().dot(N)).mul(lRec.attenuation).div(lRec.probability));
+				
+				// populate dummy color
+				evalBRDF(L, V, N, kD, BRDFval);
 				// 5) Compute the final color using the BRDF value and the information in the
 				//    light sampling record.
-				outIntensity.add(BRDFval.clone().mul(l.intensity).mul(L.clone().dot(N)).mul(lRec.attenuation).div(lRec.probability));
+				outIntensity.add(BRDFval.mul(l.intensity).mul(L.dot(N)).mul(lRec.attenuation).div(lRec.probability));
 			}
 		}
 	}

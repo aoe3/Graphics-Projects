@@ -1,5 +1,6 @@
 package ray2.surface;
 
+import egl.math.Vector3;
 import ray2.IntersectionRecord;
 import ray2.Ray;
 import egl.math.Vector3d;
@@ -151,7 +152,42 @@ public class Cylinder extends Surface {
 		// TODO#A7: Compute the bounding box and store the result in
 		// averagePosition, minBound, and maxBound.
 		// Hint: The bounding box may be transformed by a transformation matrix.
+		Vector3d pt1 = new Vector3d(center.x+radius, center.y+radius, center.z);
+		Vector3d pt2 = new Vector3d(center.x-radius, center.y+radius, center.z);
+		Vector3d pt3 = new Vector3d(center.x+radius, center.y-radius, center.z);
+		Vector3d pt4 = new Vector3d(center.x-radius, center.y-radius, center.z);
+		Vector3d pt5 = new Vector3d(center.x+radius, center.y+radius, center.z+height);
+		Vector3d pt6 = new Vector3d(center.x-radius, center.y+radius, center.z+height);
+		Vector3d pt7 = new Vector3d(center.x+radius, center.y-radius, center.z+height);
+		Vector3d pt8 = new Vector3d(center.x-radius, center.y-radius, center.z+height);
 
+		Vector3d centerPt = new Vector3d(center.x, center.y, center.z+height/2.0);
+
+		Vector3d[] points = new Vector3d[8];
+		points[0] = tMat.mulPos(pt1);
+		points[1] = tMat.mulPos(pt2);
+		points[2] = tMat.mulPos(pt3);
+		points[3] = tMat.mulPos(pt4);
+		points[4] = tMat.mulPos(pt5);
+		points[5] = tMat.mulPos(pt6);
+		points[6] = tMat.mulPos(pt7);
+		points[7] = tMat.mulPos(pt8);
+
+		averagePosition = tMat.mulPos(centerPt);
+
+		Vector3d minBound = new Vector3d();
+		Vector3d maxBound = new Vector3d();
+
+		for (int i=0; i<8; i++) {
+			minBound.x = Math.min(points[i].x, minBound.x);
+			maxBound.x = Math.max(points[i].x, maxBound.x);
+
+			minBound.y = Math.min(points[i].y, minBound.y);
+			maxBound.y = Math.max(points[i].y, maxBound.y);
+
+			minBound.z = Math.min(points[i].z, minBound.z);
+			maxBound.z = Math.max(points[i].z, maxBound.z);
+		}
 	}
 
 	/**

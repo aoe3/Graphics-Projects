@@ -3,6 +3,7 @@ package ray2.surface;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import egl.math.Vector3;
 import ray2.IntersectionRecord;
 import ray2.Ray;
 import egl.math.Matrix4d;
@@ -34,9 +35,9 @@ public class Group extends Surface {
     // Compute tMat, tMatInv, tMatTInv using transformMat.
     // Hint: We apply the transformation from bottom up the tree. 
     // i.e. The child's transformation will be applied to objects before its parent's.
-	    
-	/** To calculate tMatInv, we can also left compose pMatInv with the inverse of transformMat */
-	tMat = new Matrix4d(transformMat).mulAfter(pMat);
+
+    /** To calculate tMatInv, we can also left compose pMatInv with the inverse of transformMat */
+    tMat = new Matrix4d(transformMat).mulAfter(pMat);
     tMatInv = new Matrix4d(tMat).invert();
     tMatTInv = new Matrix4d(tMat).transpose().invert();
     
@@ -50,7 +51,7 @@ public class Group extends Surface {
   
   
   public void setTranslate(Vector3d T) {
-	Matrix4d.createTranslation(T, tmp);
+    Matrix4d.createTranslation(T, tmp);
     transformMat.mulAfter(tmp);
   }
   
@@ -66,7 +67,7 @@ public class Group extends Surface {
   
   public void setScale(Vector3d S) { 
     // add scale to transformMat
-	Matrix4d.createScale(S, tmp);
+    Matrix4d.createScale(S, tmp);
     transformMat.mulAfter(tmp);
   }
   
@@ -75,7 +76,27 @@ public class Group extends Surface {
   }
   
   public boolean intersect(IntersectionRecord outRecord, Ray ray) { return false; }
-  public void computeBoundingBox() {  }
+  public void computeBoundingBox() {
+    Vector3d minBound = new Vector3d();
+    Vector3d maxBound = new Vector3d();
+
+    Vector3d totalAvg = new Vector3d();
+
+    for (Surface obj : objs) {
+      obj.computeBoundingBox();
+      minBound.x = Math.min(obj.minBound.x, minBound.x);
+      maxBound.x = Math.max(obj.maxBound.x, maxBound.x);
+
+      minBound.y = Math.min(obj.minBound.y, minBound.y);
+      maxBound.y = Math.max(obj.maxBound.y, maxBound.y);
+
+      minBound.z = Math.min(obj.minBound.z, minBound.z);
+      maxBound.z = Math.max(obj.maxBound.z, maxBound.z);
+
+      totalAvg.add(averagePosition);
+    }
+    averagePosition = totalAvg.div(objs.size());
+  }
 
   public void appendRenderableSurfaces (ArrayList<Surface> in) {
     for (Iterator<Surface> iter = objs.iterator(); iter.hasNext();)

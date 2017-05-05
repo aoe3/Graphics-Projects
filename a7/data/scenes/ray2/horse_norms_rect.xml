@@ -2,7 +2,6 @@
 <!--  Horse mesh (~100K polygons, with normals)
  -->
 <scene>
-  <AccelStruct type="NaiveAccelStruct"/>
   <samples>64</samples>
   <exposure>4</exposure>
   <camera type="PerspectiveCamera">

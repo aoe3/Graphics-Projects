@@ -5,6 +5,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
+import com.sun.glass.ui.Pixels;
+
 import ray2.camera.Camera;
 import ray2.shader.Shader;
 import ray2.viewer.QuickViewer;
@@ -303,7 +305,6 @@ public class RayTracer {
 	 */
 	public static void renderBlock(Scene scene, Image outImage, int offsetX, int offsetY, int sizeX, int sizeY) {
 
-
 		// Do some basic setup
 		Ray ray = new Ray();
 		Colord pixelColor = new Colord();
@@ -320,6 +321,7 @@ public class RayTracer {
 		double exposure = scene.getExposure();
 
 		Camera cam = scene.getCamera();
+		
 
 		for(int x = offsetX; x < (offsetX + sizeX); x++) {
 			for(int y = offsetY; y < (offsetY + sizeY); y++) {
@@ -328,23 +330,28 @@ public class RayTracer {
 
 				// TODO#A7 Implement supersampling for antialiasing.
 				// Each pixel should have (samples*samples) subpixels.
-				double lowerbound = -1.0*(samples-1/2);
-				double upperbound = (samples-1/2);
+				int counter = 0;
 				
-				for (double dx = lowerbound; dx < upperbound; dx += sInv){
-					for (double dy = lowerbound; dy < upperbound; dy += sInv){
-						double outX = (x + dx) * sInv;
-						double outY = (y + dy) * sInv;
-						Ray outRay = new Ray();
-						scene.camera.getRay(outRay, outX, outY);
-						pixelColor.add(outRay.direction);
-						
+				for (double dx = 0; dx < samples; dx ++){
+					for (double dy = 0; dy < samples; dy ++){
+						double outX = (double)x + dx / (double)samples;
+						double outY = (double)y + dy / (double)samples;
+						double inX = outX/(double)width;
+						double inY = outY/(double)height;
+//						System.out.println(inX);
+//						System.out.println(inY);
+						cam.getRay(ray, inX, inY);
+						shadeRay(rayColor, scene, ray, 1);
+						pixelColor.add(rayColor);
+						counter++;
 					}
 				}
+//				System.out.print("Counter: " +  counter);
+//				System.out.println("Samples squared: " +samples*samples);
+				pixelColor.div(counter);
 				pixelColor.mul(exposure);
 				outImage.setPixelColor(pixelColor, x, y);
-
 			}
 		}
 	}
-}
+} 

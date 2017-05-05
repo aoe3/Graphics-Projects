@@ -150,7 +150,42 @@ public class Box extends Surface {
 		// Hint: The bounding box is not the same as just minPt and maxPt,
 		// because
 		// this object can be transformed by a transformation matrix.
+		Vector3d pt1 = minPt;
+		Vector3d pt2 = maxPt;
+		Vector3d pt3 = new Vector3d(minPt.x, minPt.y, maxPt.z);
+		Vector3d pt4 = new Vector3d(minPt.x, maxPt.y, maxPt.z);
+		Vector3d pt5 = new Vector3d(minPt.x, maxPt.y, minPt.z);
+		Vector3d pt6 = new Vector3d(maxPt.x, maxPt.y, minPt.z);
+		Vector3d pt7 = new Vector3d(maxPt.x, minPt.y, maxPt.z);
+		Vector3d pt8 = new Vector3d(maxPt.x, minPt.y, minPt.z);
 
+		Vector3d centerPt = new Vector3d(minPt.x + (maxPt.x - minPt.x)/2.0, minPt.y + (maxPt.y - minPt.y)/2.0, minPt.z + (maxPt.z - minPt.z)/2.0);
+
+		Vector3d[] points = new Vector3d[8];
+		points[0] = tMat.mulPos(pt1);
+		points[1] = tMat.mulPos(pt2);
+		points[2] = tMat.mulPos(pt3);
+		points[3] = tMat.mulPos(pt4);
+		points[4] = tMat.mulPos(pt5);
+		points[5] = tMat.mulPos(pt6);
+		points[6] = tMat.mulPos(pt7);
+		points[7] = tMat.mulPos(pt8);
+
+		averagePosition = tMat.mulPos(centerPt);
+
+		Vector3d minBound = new Vector3d();
+		Vector3d maxBound = new Vector3d();
+
+		for (int i=0; i<8; i++) {
+			minBound.x = Math.min(points[i].x, minBound.x);
+			maxBound.x = Math.max(points[i].x, maxBound.x);
+
+			minBound.y = Math.min(points[i].y, minBound.y);
+			maxBound.y = Math.max(points[i].y, maxBound.y);
+
+			minBound.z = Math.min(points[i].z, minBound.z);
+			maxBound.z = Math.max(points[i].z, maxBound.z);
+		}
 	}
 
 	public boolean intersect(IntersectionRecord outRecord, Ray ray) {
