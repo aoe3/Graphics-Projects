@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import com.sun.glass.ui.Pixels;
 
+import ray2.accel.BvhTests;
 import ray2.camera.Camera;
 import ray2.shader.Shader;
 import ray2.viewer.QuickViewer;
@@ -111,6 +112,15 @@ public class RayTracer {
 	 * @param args
 	 */
 	public static final void main(String[] args) {
+		BvhTests tester = new BvhTests();
+
+		try {
+			BvhTests.setUpBeforeClass();
+		} catch (Exception e){ }
+		tester.testComputeBoundingBox();
+		tester.testBvhNodeIntersection();
+		tester.testBvhTreeCreation();
+
 		ArrayList<ScenePath> pathArgs = new ArrayList<>();
 		ArrayList<ScenePath> scenesToRender = new ArrayList<>();
 		String currentRoot = directory;

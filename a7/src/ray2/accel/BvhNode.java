@@ -84,31 +84,46 @@ public class BvhNode {
 	 */
 	public boolean intersects(Ray ray) {
 		// TODO#A7: fill in this function.
-		float txMin = (float)((minBound.x - ray.origin.x) / ray.direction.x);
-		float tyMin = (float)((minBound.y - ray.origin.y) / ray.direction.y);
-		float tzMin = (float)((minBound.z - ray.origin.z) / ray.direction.z);
+		float ax = 1.0f / (float)ray.direction.x;
+		float ay = 1.0f / (float)ray.direction.y;
+		float az = 1.0f / (float)ray.direction.z;
 
-		float txMax = (float)((maxBound.x - ray.origin.x) / ray.direction.x);
-		float tyMax = (float)((maxBound.y - ray.origin.y) / ray.direction.y);
-		float tzMax = (float)((maxBound.z - ray.origin.z) / ray.direction.z);
+		float txMin, txMax;
+		float tyMin, tyMax;
+		float tzMin, tzMax;
 
-		float txEnter = Math.min(txMin, txMax);
-		float txExit = Math.max(txMin, txMax);
+		if (ax >= 0) {
+			txMin = ax * (float) (minBound.x - ray.origin.x);
+			txMax = ax * (float) (maxBound.x - ray.origin.x);
+		} else {
+			txMin = ax * (float) (maxBound.x - ray.origin.x);
+			txMax = ax * (float) (minBound.x - ray.origin.x);
+		}
 
-		float tyEnter = Math.min(tyMin, tyMax);
-		float tyExit = Math.max(tyMin, tyMax);
+		if (ay >= 0) {
+			tyMin = ay * (float) (minBound.y - ray.origin.y);
+			tyMax = ay * (float) (maxBound.y - ray.origin.y);
+		} else {
+			tyMin = ay * (float) (maxBound.y - ray.origin.y);
+			tyMax = ay * (float) (minBound.y - ray.origin.y);
+		}
 
-		if (txEnter > tyExit || txExit < tyEnter) {
+		if (az >= 0) {
+			tzMin = az * (float) (minBound.z - ray.origin.z);
+			tzMax = az * (float) (maxBound.z - ray.origin.z);
+		} else {
+			tzMin = az * (float) (maxBound.z - ray.origin.z);
+			tzMax = az * (float) (minBound.z - ray.origin.z);
+		}
+
+		if (txMin > tyMax || txMax < tyMin) {
 			return false;
 		}
 
-		float tEnter = Math.max(Math.max(txEnter, tyEnter), txEnter);
-		float tExit = Math.min(Math.min(txExit, tyExit), txExit);
+		float tEnter = Math.max(Math.max(txMin, tyMin), txMin);
+		float tExit = Math.min(Math.min(txMax, tyMax), txMax);
 
-		float tzEnter = Math.min(tzMin, tzMax);
-		float tzExit = Math.max(tzMin, tzMax);
-
-		if (tEnter > tzExit || tExit < tzEnter) {
+		if (tEnter > tzMax || tExit < tzMin) {
 			return false;
 		}
 

@@ -107,16 +107,17 @@ public class Sphere extends Surface {
 	}
 
 	public void computeBoundingBox() {
+//		System.out.println(center);
 		// TODO#A7: Compute the bounding box and store the result in
 		// averagePosition, minBound, and maxBound.
-		Vector3d pt1 = new Vector3d(center.x+radius, center.y+radius, center.z-radius);
-		Vector3d pt2 = new Vector3d(center.x-radius, center.y+radius, center.z-radius);
-		Vector3d pt3 = new Vector3d(center.x+radius, center.y-radius, center.z-radius);
-		Vector3d pt4 = new Vector3d(center.x-radius, center.y-radius, center.z-radius);
-		Vector3d pt5 = new Vector3d(center.x+radius, center.y+radius, center.z+radius);
-		Vector3d pt6 = new Vector3d(center.x-radius, center.y+radius, center.z+radius);
-		Vector3d pt7 = new Vector3d(center.x+radius, center.y-radius, center.z+radius);
-		Vector3d pt8 = new Vector3d(center.x-radius, center.y-radius, center.z+radius);
+		Vector3d pt1 = new Vector3d(radius, radius, -radius);
+		Vector3d pt2 = new Vector3d(-radius, radius, -radius);
+		Vector3d pt3 = new Vector3d(radius, -radius, -radius);
+		Vector3d pt4 = new Vector3d(-radius, -radius, -radius);
+		Vector3d pt5 = new Vector3d(radius, radius, radius);
+		Vector3d pt6 = new Vector3d(-radius, radius, radius);
+		Vector3d pt7 = new Vector3d(radius, -radius, radius);
+		Vector3d pt8 = new Vector3d(-radius, -radius, radius);
 
 		Vector3d[] points = new Vector3d[8];
 		points[0] = tMat.mulPos(pt1);
@@ -128,12 +129,16 @@ public class Sphere extends Surface {
 		points[6] = tMat.mulPos(pt7);
 		points[7] = tMat.mulPos(pt8);
 
-		averagePosition = tMat.mulPos(center);
+		averagePosition = tMat.mulPos(new Vector3d());
 
-		minBound = new Vector3d();
-		maxBound = new Vector3d();
-
+		minBound = points[0];
+		maxBound = points[7];
+//		System.out.println(pt4);
+//		System.out.println(tMat);
+//		System.out.println(points[3]);
 		for (int i=0; i<8; i++) {
+//			System.out.println(i);
+//			System.out.println("min " + minBound);
 			minBound.x = Math.min(points[i].x, minBound.x);
 			maxBound.x = Math.max(points[i].x, maxBound.x);
 

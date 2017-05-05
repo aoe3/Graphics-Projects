@@ -164,8 +164,8 @@ public class Triangle extends Surface {
 
 		averagePosition = tMat.mulPos(centerPt);
 
-		minBound = new Vector3d();
-		maxBound = new Vector3d();
+		minBound = points[0];
+		maxBound = points[7];
 
 		for (int i=0; i<8; i++) {
 			minBound.x = Math.min(points[i].x, minBound.x);

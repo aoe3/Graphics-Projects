@@ -99,12 +99,11 @@ public class Bvh implements AccelStruct {
 		// Find out the BIG bounding box enclosing all the surfaces in the range [start, end)
 		// and store them in minB and maxB.
 		// Hint: To find the bounding box for each surface, use getMinBound() and getMaxBound() */
-		Vector3d minBound = new Vector3d();
-		Vector3d maxBound = new Vector3d();
+		Vector3d minBound = surfaces[start].getMinBound();
+		Vector3d maxBound = surfaces[start].getMaxBound();
 
 		for (int i=start; i<end; i++) {
 			surfaces[i].computeBoundingBox();
-
 			minBound.x = Math.min(surfaces[i].getMinBound().x, minBound.x);
 			maxBound.x = Math.max(surfaces[i].getMaxBound().x, maxBound.x);
 
@@ -114,15 +113,12 @@ public class Bvh implements AccelStruct {
 			minBound.z = Math.min(surfaces[i].getMinBound().z, minBound.z);
 			maxBound.z = Math.max(surfaces[i].getMaxBound().z, maxBound.z);
 		}
-		
+
 		// ==== Step 2 ====
-		// Check for the base case. 
+		// Check for the base case.
 		// If the range [start, end) is small enough (e.g. less than or equal to 10), just return a new leaf node.
 		if (end-start <= 10) {
-			BvhNode leaf = new BvhNode();
-			leaf.surfaceIndexStart = start;
-			leaf.surfaceIndexEnd = end;
-			return leaf;
+			return new BvhNode(minBound, maxBound, null, null, start, end);
 		}
 
 		// ==== Step 3 ====
@@ -150,14 +146,8 @@ public class Bvh implements AccelStruct {
 		// ==== Step 5 ====
 		// Recursively create left and right children.
 		int midPt = start + (end-start + 1) / 2;
-		BvhNode node = new BvhNode();
 
-		node.child[0] = createTree(start, midPt);
-		node.child[1] = createTree(midPt, end);
-
-		root = node;
-
-		return root;
+		return new BvhNode(minBound, maxBound, createTree(start, midPt), createTree(midPt, end), start, end);
 	}
 }
 
