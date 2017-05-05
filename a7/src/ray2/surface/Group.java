@@ -77,8 +77,8 @@ public class Group extends Surface {
   
   public boolean intersect(IntersectionRecord outRecord, Ray ray) { return false; }
   public void computeBoundingBox() {
-    Vector3d minBound = new Vector3d();
-    Vector3d maxBound = new Vector3d();
+    minBound = new Vector3d();
+    maxBound = new Vector3d();
 
     Vector3d totalAvg = new Vector3d();
 

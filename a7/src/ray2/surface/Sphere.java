@@ -130,8 +130,8 @@ public class Sphere extends Surface {
 
 		averagePosition = tMat.mulPos(center);
 
-		Vector3d minBound = new Vector3d();
-		Vector3d maxBound = new Vector3d();
+		minBound = new Vector3d();
+		maxBound = new Vector3d();
 
 		for (int i=0; i<8; i++) {
 			minBound.x = Math.min(points[i].x, minBound.x);
