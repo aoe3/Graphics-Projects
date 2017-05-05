@@ -61,8 +61,9 @@ public class Bvh implements AccelStruct {
 			double tmin = Double.MAX_VALUE;
 			for (int i=node.surfaceIndexStart; i<node.surfaceIndexEnd; i++) {
 				IntersectionRecord record = new IntersectionRecord();
+				Ray ray = new Ray(rayIn);
 				Surface surface = surfaces[i];
-				if (surface.intersect(record, rayIn)) {
+				if (surface.intersect(record, ray)) {
 					if (record.t < tmin) {
 						closest = record;
 						tmin = record.t;
@@ -73,7 +74,6 @@ public class Bvh implements AccelStruct {
 					}
 				}
 			}
-
 			if (closest != null) {
 				outRecord.set(closest);
 				return true;
@@ -83,8 +83,10 @@ public class Bvh implements AccelStruct {
 		} else if (node.intersects(rayIn)) {
 			IntersectionRecord leftRecord = new IntersectionRecord();
 			IntersectionRecord rightRecord = new IntersectionRecord();
-			boolean leftIntersection = intersectHelper(node.child[0], leftRecord, rayIn, anyIntersection);
-			boolean rightIntersection = intersectHelper(node.child[1], rightRecord, rayIn, anyIntersection);
+			Ray leftRay = new Ray(rayIn);
+			Ray rightRay = new Ray(rayIn);
+			boolean leftIntersection = intersectHelper(node.child[0], leftRecord, leftRay, anyIntersection);
+			boolean rightIntersection = intersectHelper(node.child[1], rightRecord, rightRay, anyIntersection);
 			if (!leftIntersection) {
 				if (!rightIntersection) {
 					return false;

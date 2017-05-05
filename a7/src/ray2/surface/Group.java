@@ -77,25 +77,6 @@ public class Group extends Surface {
   
   public boolean intersect(IntersectionRecord outRecord, Ray ray) { return false; }
   public void computeBoundingBox() {
-    minBound = new Vector3d();
-    maxBound = new Vector3d();
-
-    Vector3d totalAvg = new Vector3d();
-
-    for (Surface obj : objs) {
-      obj.computeBoundingBox();
-      minBound.x = Math.min(obj.minBound.x, minBound.x);
-      maxBound.x = Math.max(obj.maxBound.x, maxBound.x);
-
-      minBound.y = Math.min(obj.minBound.y, minBound.y);
-      maxBound.y = Math.max(obj.maxBound.y, maxBound.y);
-
-      minBound.z = Math.min(obj.minBound.z, minBound.z);
-      maxBound.z = Math.max(obj.maxBound.z, maxBound.z);
-
-      totalAvg.add(averagePosition);
-    }
-    averagePosition = totalAvg.div(objs.size());
   }
 
   public void appendRenderableSurfaces (ArrayList<Surface> in) {

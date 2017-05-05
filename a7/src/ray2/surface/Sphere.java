@@ -134,12 +134,7 @@ public class Sphere extends Surface {
 
 		minBound = points[0];
 		maxBound = points[7];
-//		System.out.println(pt4);
-//		System.out.println(tMat);
-//		System.out.println(points[3]);
 		for (int i=0; i<8; i++) {
-//			System.out.println(i);
-//			System.out.println("min " + minBound);
 			minBound.x = Math.min(points[i].x, minBound.x);
 			maxBound.x = Math.max(points[i].x, maxBound.x);
 
