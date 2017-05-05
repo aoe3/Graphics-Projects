@@ -183,7 +183,9 @@ public class BvhTests {
        tmatTInv = tmatInv.clone().transpose();
 
        // Sphere
+        System.out.println(s.center);
        s.setTransformation(tmat, tmatInv, tmatTInv);
+        System.out.println(s.center);
        assertTrue("Sphere with transform:\n"
               + "scale: <1, 2, 3>\n"
               + "translate: <1, 2, 3>\n"

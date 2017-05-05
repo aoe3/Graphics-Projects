@@ -57,19 +57,54 @@ public class Bvh implements AccelStruct {
 		// Hint: For a leaf node, use a normal linear search. Otherwise, search in the left and right children.
 		// Another hint: save time by checking if the ray intersects the node first before checking the childrens.
 		if (node.isLeaf()) {
-			boolean intersects = false;
+			IntersectionRecord closest = null;
+			double tmin = Double.MAX_VALUE;
 			for (int i=node.surfaceIndexStart; i<node.surfaceIndexEnd; i++) {
-				if (surfaces[i].intersect(outRecord, rayIn)) {
-					if (anyIntersection) {
-						return true;
-					} else {
-						intersects = true;
+				IntersectionRecord record = new IntersectionRecord();
+				Surface surface = surfaces[i];
+				if (surface.intersect(record, rayIn)) {
+					if (record.t < tmin) {
+						closest = record;
+						tmin = record.t;
+
+						if (anyIntersection) {
+							return true;
+						}
 					}
-				};
+				}
 			}
-			return intersects;
+
+			if (closest != null) {
+				outRecord.set(closest);
+				return true;
+			} else {
+				return false;
+			}
 		} else if (node.intersects(rayIn)) {
-			return intersectHelper(node.child[0], outRecord, rayIn, anyIntersection) || intersectHelper(node.child[1], outRecord, rayIn, anyIntersection);
+			IntersectionRecord leftRecord = new IntersectionRecord();
+			IntersectionRecord rightRecord = new IntersectionRecord();
+			boolean leftIntersection = intersectHelper(node.child[0], leftRecord, rayIn, anyIntersection);
+			boolean rightIntersection = intersectHelper(node.child[1], rightRecord, rayIn, anyIntersection);
+			if (!leftIntersection) {
+				if (!rightIntersection) {
+					return false;
+				} else {
+					outRecord.set(rightRecord);
+				}
+			} else if (!rightIntersection) {
+				if (!leftIntersection) {
+					return false;
+				} else {
+					outRecord.set(leftRecord);
+				}
+			} else {
+				if (leftRecord.t < rightRecord.t) {
+					outRecord.set(leftRecord);
+				} else {
+					outRecord.set(rightRecord);
+				}
+			}
+			return true;
 		} else {
 			return false;
 		}
