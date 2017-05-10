@@ -2,6 +2,7 @@
 <!--  A blue box sitting on a floor.
  -->
 <scene>
+  <backColor>1.0 0.0 0.0</backColor>
   <samples>16</samples>
   <camera type="PerspectiveCamera">
     <viewPoint>0 25 0</viewPoint>

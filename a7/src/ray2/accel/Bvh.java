@@ -62,6 +62,7 @@ public class Bvh implements AccelStruct {
 			for (int i=node.surfaceIndexStart; i<node.surfaceIndexEnd; i++) {
 				IntersectionRecord record = new IntersectionRecord();
 				Ray ray = new Ray(rayIn);
+				ray.makeOffsetRay();
 				Surface surface = surfaces[i];
 				if (surface.intersect(record, ray)) {
 					if (record.t < tmin) {
@@ -85,6 +86,10 @@ public class Bvh implements AccelStruct {
 			IntersectionRecord rightRecord = new IntersectionRecord();
 			Ray leftRay = new Ray(rayIn);
 			Ray rightRay = new Ray(rayIn);
+
+			leftRay.makeOffsetRay();
+			rightRay.makeOffsetRay();
+
 			boolean leftIntersection = intersectHelper(node.child[0], leftRecord, leftRay, anyIntersection);
 			boolean rightIntersection = intersectHelper(node.child[1], rightRecord, rightRay, anyIntersection);
 			if (!leftIntersection) {
@@ -182,7 +187,7 @@ public class Bvh implements AccelStruct {
 
 		// ==== Step 5 ====
 		// Recursively create left and right children.
-		int midPt = start + (end-start + 1) / 2;
+		int midPt = start + (end-start) / 2;
 
 		return new BvhNode(minBound, maxBound, createTree(start, midPt), createTree(midPt, end), start, end);
 	}
