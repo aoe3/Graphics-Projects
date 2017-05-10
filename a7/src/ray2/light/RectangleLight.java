@@ -52,9 +52,9 @@ public class RectangleLight extends Light {
 		// 1) Set the 3 basis vectors in the orthonormal basis, 
         //    based on normalDir and upDir
         // 2) Set up the helper variables if needed
-		w.set(normalDir).negate().normalize();
-		u.set(upDir).cross(w).normalize();
-		v.set(w).cross(u).normalize();
+		w.set(normalDir.clone()).negate().normalize();
+		u.set(upDir.clone().cross(w.clone()).normalize());
+		v.set(w.clone().cross(u.clone()).normalize());
 	}
 
 	/**
@@ -82,10 +82,10 @@ public class RectangleLight extends Light {
 		// 2. compute the l vector, i.e. the direction the light incidents on the shading point
 		Vector3d l = samplePoint.clone().sub(shadingPoint);
 		// 3. compute the distance between light point and shading point, and get attenuation
-		float dist = (float)l.clone().len();
-		float atten = 1.0f / (float)shadingPoint.distSq(samplePoint);
+		double dist = l.clone().len();
+		double atten = (l.clone().normalize().dot(w.normalize())) / shadingPoint.distSq(samplePoint);
 		// 4. compute the probablity this light point is sampled, which is used for Monte-Carlo integration
-		float probability = 1f/(float)(width*height);
+		double probability = 1.0 / (width*height);
 		// 5. write relevant info to LightSamplingRecord object
 		lRec.direction.set(l);
 		lRec.distance = dist;
