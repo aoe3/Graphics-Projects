@@ -51,6 +51,7 @@ public class Glazed extends Shader {
 		// TODO#A7: fill in this function.
 		// You may find it helpful to create helper methods if the code here gets too long.
 		//  1) Compute the Fresnel term R
+//		double fresnel = fresnel();
         //  2) Shade the substrate and multiply the result color by 1 - R
         //  3) Compute the reflected ray and call RayTracer.shadeRay on it, multiply result color by R
 		

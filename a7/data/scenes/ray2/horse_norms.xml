@@ -43,5 +43,10 @@
   	<direction>3 10 5</direction>
   	<intensity>.4 .4 .4</intensity>
   </light>
+
+    <cubemap>
+    <filename>data/textures/cubemaps/kitchen_cross.pfm</filename>
+    <scaleFactor>3.5</scaleFactor>
+    </cubemap>
 </scene>
 

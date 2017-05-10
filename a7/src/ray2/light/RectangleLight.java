@@ -85,7 +85,7 @@ public class RectangleLight extends Light {
 		float dist = (float)l.clone().len();
 		float atten = 1.0f / (float)shadingPoint.distSq(samplePoint);
 		// 4. compute the probablity this light point is sampled, which is used for Monte-Carlo integration
-		float probability = 1f;
+		float probability = 1f/(float)(width*height);
 		// 5. write relevant info to LightSamplingRecord object
 		lRec.direction.set(l);
 		lRec.distance = dist;
