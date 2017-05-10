@@ -300,6 +300,7 @@ public class RayTracer {
 
 		Shader shader = intersectionRecord.surface.getShader();
 		shader.shade(outColor, scene, ray, intersectionRecord, depth);
+
 	}
 
 	/**

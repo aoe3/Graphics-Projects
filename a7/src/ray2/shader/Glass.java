@@ -58,46 +58,45 @@ public class Glass extends Shader {
 		} else {
 //			System.out.println("Ray is outside");
 			// ray is outside
-			normal = record.normal;
+			normal = record.normal.clone();
 			n1 = 1.0f;
 			n2 = refractiveIndex;
 		}
 		Vector3d reflected = normal.clone().mul(normal.clone().dot(ray.direction.clone().negate()) * 2).sub(ray.direction.clone().negate());
 
-		double fresnel = fresnel(normal, reflected, refractiveIndex);
+		double fresnel = fresnel(normal, reflected, n2);
         // 2) Determine whether total internal reflection occurs.
-//		if (fresnel == 1) {
+		if (fresnel == 1) {
 			Ray reflectedRay = new Ray(record.location, reflected.clone());
 			reflectedRay.makeOffsetRay();
 			// total internal reflection
 			// 3a) Compute the reflected ray using Snell's law
-//			System.out.println(reflectedRay.direction);
 			RayTracer.shadeRay(outIntensity, scene, reflectedRay, depth);
-//		}
+		}
 
 		// 3b) Compute the reflected ray and refracted ray (if total internal reflection does not occur)
         //    using Snell's law and call RayTracer.shadeRay on them to shade them
-//		else {
-//			double theta1 = Math.acos(normal.clone().dot(ray.direction.clone().negate()));
-//			double theta2 = Math.asin(Math.sin(theta1) * n1/n2);
-//
-//			reflected.mul(1-fresnel);
-//			Vector3d pt1 = (ray.direction.clone().negate().add(normal.clone().mul(Math.cos(theta1)))).mul(n1).div(n2);
-//			Vector3d pt2 = normal.clone().mul(Math.cos(theta2));
-//			Vector3d refracted = pt1.clone().sub(pt2.clone());
-//			refracted.mul(fresnel);
-//
-//			Colord reflectedColor = new Colord();
-//			Colord refractedColor = new Colord();
-//
-//			Ray reflectedRay = new Ray(record.location, reflected);
-//			Ray refractedRay = new Ray(record.location, refracted);
-//
-//			RayTracer.shadeRay(reflectedColor, scene, reflectedRay, depth);
-//			RayTracer.shadeRay(refractedColor, scene, refractedRay, depth);
-//
-//			outIntensity.add(reflectedColor);
+		else {
+			double theta1 = Math.acos(normal.clone().dot(ray.direction.clone().negate()));
+			double theta2 = Math.asin(Math.sin(theta1) * n1/n2);
+
+			reflected.mul(1-fresnel);
+			Vector3d pt1 = (ray.direction.clone().add(normal.clone().mul(Math.cos(theta1)))).mul(n1).div(n2);
+			Vector3d pt2 = normal.clone().mul(Math.cos(theta2));
+			Vector3d refracted = pt1.clone().sub(pt2.clone());
+			refracted.mul(fresnel);
+
+			Colord reflectedColor = new Colord();
+			Colord refractedColor = new Colord();
+
+			Ray reflectedRay = new Ray(record.location, reflected);
+			Ray refractedRay = new Ray(record.location, refracted);
+
+			RayTracer.shadeRay(reflectedColor, scene, reflectedRay, depth);
+			RayTracer.shadeRay(refractedColor, scene, refractedRay, depth);
+
+			outIntensity.add(reflectedColor);
 //			outIntensity.add(refractedColor);
-//		}
+		}
 	}
 }

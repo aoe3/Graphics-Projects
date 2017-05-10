@@ -19,7 +19,7 @@
       <file leaf-file-name="Bvh.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/ray2/accel/Bvh.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1102">
+            <state relative-caret-position="-884">
               <caret line="59" column="46" lean-forward="true" selection-start-line="59" selection-start-column="46" selection-end-line="59" selection-end-column="46" />
               <folding />
             </state>
@@ -36,11 +36,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Glass.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Glass.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/ray2/shader/Glass.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="119">
-              <caret line="69" column="74" lean-forward="false" selection-start-line="69" selection-start-column="74" selection-end-line="69" selection-end-column="74" />
+            <state relative-caret-position="436">
+              <caret line="93" column="0" lean-forward="false" selection-start-line="93" selection-start-column="0" selection-end-line="93" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -86,11 +86,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="RayTracer.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="RayTracer.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/ray2/RayTracer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="476">
-              <caret line="301" column="70" lean-forward="false" selection-start-line="301" selection-start-column="70" selection-end-line="301" selection-end-column="70" />
+            <state relative-caret-position="79">
+              <caret line="285" column="0" lean-forward="true" selection-start-line="285" selection-start-column="0" selection-end-line="285" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Shader.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/ray2/shader/Shader.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="377">
+              <caret line="59" column="41" lean-forward="true" selection-start-line="59" selection-start-column="41" selection-end-line="59" selection-end-column="41" />
               <folding />
             </state>
           </provider>
@@ -101,16 +111,6 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="98">
               <caret line="36" column="42" lean-forward="false" selection-start-line="36" selection-start-column="42" selection-end-line="36" selection-end-column="42" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Mesh.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/ray2/surface/Mesh.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="458">
-              <caret line="49" column="38" lean-forward="false" selection-start-line="49" selection-start-column="38" selection-end-line="49" selection-end-column="38" />
               <folding />
             </state>
           </provider>
@@ -161,8 +161,8 @@
         <option value="$PROJECT_DIR$/src/ray2/surface/Group.java" />
         <option value="$PROJECT_DIR$/data/scenes/ray2/glass-ball-aa.xml" />
         <option value="$PROJECT_DIR$/src/ray2/accel/Bvh.java" />
-        <option value="$PROJECT_DIR$/src/ray2/RayTracer.java" />
         <option value="$PROJECT_DIR$/src/ray2/shader/Glass.java" />
+        <option value="$PROJECT_DIR$/src/ray2/RayTracer.java" />
       </list>
     </option>
   </component>
@@ -438,7 +438,7 @@
     <property name="project.structure.side.proportion" value="0.0" />
     <property name="settings.editor.selected.configurable" value="reference.settingsdialog.project.gradle" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/.project" />
-    <property name="SearchEverywhereHistoryKey" value="bvhno&#9;PSI&#9;JAVA://ray2.accel.BvhNode&#10;texture&#9;PSI&#9;JAVA://ray2.shader.Shader#texture&#10;diffu&#9;PSI&#9;JAVA://ray2.shader.BRDFShader#diffuseColor&#10;diffuse coefficient&#9;null&#9;null&#10;kD&#9;PSI&#9;JAVA://sun.security.krb5.internal.KDCOptions" />
+    <property name="SearchEverywhereHistoryKey" value="fresnel&#9;PSI&#9;JAVA://ray2.shader.Shader#fresnel&#10;bvhno&#9;PSI&#9;JAVA://ray2.accel.BvhNode&#10;texture&#9;PSI&#9;JAVA://ray2.shader.Shader#texture&#10;diffu&#9;PSI&#9;JAVA://ray2.shader.BRDFShader#diffuseColor&#10;diffuse coefficient&#9;null&#9;null&#10;kD&#9;PSI&#9;JAVA://sun.security.krb5.internal.KDCOptions" />
   </component>
   <component name="RunManager" selected="Application.Unnamed">
     <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin">
@@ -855,14 +855,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ray2/shader/Shader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1000">
-          <caret line="55" column="37" lean-forward="false" selection-start-line="55" selection-start-column="37" selection-end-line="55" selection-end-column="37" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/data/scenes/ray2/bunny-norms-aa.xml.png">
       <provider selected="true" editor-type-id="images">
         <state />
@@ -1032,14 +1024,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ray2/accel/Bvh.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1102">
-          <caret line="59" column="46" lean-forward="true" selection-start-line="59" selection-start-column="46" selection-end-line="59" selection-end-column="46" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/ray2/Ray.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-1134">
@@ -1056,18 +1040,34 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ray2/RayTracer.java">
+    <entry file="file://$PROJECT_DIR$/src/ray2/accel/Bvh.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="476">
-          <caret line="301" column="70" lean-forward="false" selection-start-line="301" selection-start-column="70" selection-end-line="301" selection-end-column="70" />
+        <state relative-caret-position="-884">
+          <caret line="59" column="46" lean-forward="true" selection-start-line="59" selection-start-column="46" selection-end-line="59" selection-end-column="46" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/ray2/shader/Glass.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="69" column="74" lean-forward="false" selection-start-line="69" selection-start-column="74" selection-end-line="69" selection-end-column="74" />
+        <state relative-caret-position="436">
+          <caret line="93" column="0" lean-forward="false" selection-start-line="93" selection-start-column="0" selection-end-line="93" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ray2/shader/Shader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="377">
+          <caret line="59" column="41" lean-forward="true" selection-start-line="59" selection-start-column="41" selection-end-line="59" selection-end-column="41" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ray2/RayTracer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="79">
+          <caret line="285" column="0" lean-forward="true" selection-start-line="285" selection-start-column="0" selection-end-line="285" selection-end-column="0" />
           <folding />
         </state>
       </provider>
