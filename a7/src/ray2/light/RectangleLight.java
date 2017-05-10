@@ -83,7 +83,7 @@ public class RectangleLight extends Light {
 		Vector3d l = samplePoint.clone().sub(shadingPoint);
 		// 3. compute the distance between light point and shading point, and get attenuation
 		double dist = l.clone().len();
-		double atten = (l.clone().normalize().dot(w.normalize())) / shadingPoint.distSq(samplePoint);
+		double atten = Math.max(l.clone().normalize().dot(w.normalize()) ,0.0)/ shadingPoint.distSq(samplePoint);
 		// 4. compute the probablity this light point is sampled, which is used for Monte-Carlo integration
 		double probability = 1.0 / (width*height);
 		// 5. write relevant info to LightSamplingRecord object
