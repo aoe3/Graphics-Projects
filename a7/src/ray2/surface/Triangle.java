@@ -129,7 +129,6 @@ public class Triangle extends Surface {
 						.addMultiple(gamma, owner.getMesh().getUV(face,2));
 			}
 		}
-
 		return true;
 
 	}
@@ -140,18 +139,25 @@ public class Triangle extends Surface {
 		Vector3d v0 = new Vector3d(owner.getMesh().getPosition(face,0));
 		Vector3d v1 = new Vector3d(owner.getMesh().getPosition(face,1));
 		Vector3d v2 = new Vector3d(owner.getMesh().getPosition(face,2));
-
-		Vector3d pt1 = v0;
-		Vector3d pt2 = v1;
-		Vector3d pt3 = new Vector3d(v0.x, v0.y, v2.z);
-		Vector3d pt4 = new Vector3d(v1.x, v1.y, v2.z);
-		Vector3d pt5 = new Vector3d(v0.x, v2.y, v0.z);
-		Vector3d pt6 = new Vector3d(v1.x, v2.y, v0.z);
-		Vector3d pt7 = new Vector3d(v0.x, v2.y, v2.z);
-		Vector3d pt8 = new Vector3d(v1.x, v2.y, v2.z);
+		
+		double xMin = Math.min(Math.min(v0.x, v1.x), v2.x);
+		double yMin = Math.min(Math.min(v0.y, v1.y), v2.y);
+		double zMin = Math.min(Math.min(v0.z, v1.z), v2.z);
+		double xMax = Math.max(Math.max(v0.x, v1.x), v2.x);
+		double yMax = Math.max(Math.max(v0.y, v1.y), v2.y);
+		double zMax = Math.max(Math.max(v0.z, v1.z), v2.z);
+		
+		Vector3d pt1 = new Vector3d(xMin, yMin, zMin);
+		Vector3d pt2 = new Vector3d(xMin, yMin, zMax);
+		Vector3d pt3 = new Vector3d(xMin, yMax, zMin);
+		Vector3d pt4 = new Vector3d(xMin, yMax, zMax);
+		Vector3d pt5 = new Vector3d(xMax, yMin, zMin);
+		Vector3d pt6 = new Vector3d(xMax, yMin, zMax);
+		Vector3d pt7 = new Vector3d(xMax, yMax, zMin);
+		Vector3d pt8 = new Vector3d(xMax, yMax, zMax);
 
 		Vector3d centerPt = new Vector3d((v0.x+v1.x+v2.x)/3.0, (v0.y+v1.y+v2.y)/3.0, (v0.z+v1.z+v2.z)/3.0);
-
+		
 		Vector3d[] points = new Vector3d[8];
 		points[0] = tMat.mulPos(pt1);
 		points[1] = tMat.mulPos(pt2);
@@ -166,7 +172,7 @@ public class Triangle extends Surface {
 
 		minBound = points[0];
 		maxBound = points[7];
-
+		
 		for (int i=0; i<8; i++) {
 			minBound.x = Math.min(points[i].x, minBound.x);
 			maxBound.x = Math.max(points[i].x, maxBound.x);
